@@ -1,0 +1,448 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { collection, getDocs, addDoc, query, where, orderBy } from "firebase/firestore"
+import { db } from "@/lib/firebase"
+import { useAuth } from "@/lib/auth-context"
+import { useCart } from "@/lib/cart-context"
+
+interface Product {
+  id: string
+  name: string
+  price: number
+  category: string
+}
+
+interface SelectedProduct {
+  productId: string
+  productName: string
+  quantity: number
+  price: number
+}
+
+export default function QuotePage() {
+  const { user } = useAuth()
+  const { items: cartItems, clearCart } = useCart()
+  const [products, setProducts] = useState<Product[]>([])
+  const [selectedProducts, setSelectedProducts] = useState<SelectedProduct[]>([])
+  const [loading, setLoading] = useState(false)
+  const [submitted, setSubmitted] = useState(false)
+  const [cartImported, setCartImported] = useState(false)
+  
+  const [form, setForm] = useState({
+    name: "",
+    email: user?.email || "",
+    phone: "",
+    eventType: "",
+    customEventType: "",
+    eventDate: "",
+    guests: "",
+    budget: "",
+    description: "",
+  })
+
+  useEffect(() => {
+    fetchProducts()
+  }, [])
+
+  // Import cart items on mount
+  useEffect(() => {
+    if (cartItems.length > 0 && !cartImported) {
+      const imported = cartItems.map(item => ({
+        productId: item.id,
+        productName: item.name,
+        quantity: item.quantity,
+        price: item.price,
+      }))
+      setSelectedProducts(imported)
+      setCartImported(true)
+    }
+  }, [cartItems, cartImported])
+
+  async function fetchProducts() {
+    try {
+      const q = query(
+        collection(db, "products"),
+        where("available", "==", true),
+        orderBy("category", "asc")
+      )
+      const snapshot = await getDocs(q)
+      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product))
+      setProducts(data)
+    } catch (error) {
+      console.error("Error fetching products:", error)
+    }
+  }
+
+  const addProduct = () => {
+    setSelectedProducts([...selectedProducts, { productId: "", productName: "", quantity: 1, price: 0 }])
+  }
+
+  const updateSelectedProduct = (index: number, field: string, value: string | number) => {
+    const updated = [...selectedProducts]
+    if (field === "productId") {
+      const product = products.find(p => p.id === value)
+      updated[index] = { 
+        ...updated[index], 
+        productId: value as string, 
+        productName: product?.name || "",
+        price: product?.price || 0,
+      }
+    } else {
+      updated[index] = { ...updated[index], [field]: value }
+    }
+    setSelectedProducts(updated)
+  }
+
+  const removeProduct = (index: number) => {
+    setSelectedProducts(selectedProducts.filter((_, i) => i !== index))
+  }
+
+  const estimatedTotal = selectedProducts.reduce((sum, p) => sum + p.price * p.quantity, 0)
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const docRef = await addDoc(collection(db, "quotes"), {
+        userId: user?.uid || null,
+        ...form,
+        selectedProducts: selectedProducts.filter(p => p.productId || p.productName),
+        estimatedTotal,
+        status: "new",
+        createdAt: new Date().toISOString(),
+      })
+      
+      // Send notification to admin
+      fetch("/api/send-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          type: "newQuote",
+          name: form.name,
+          email: form.email,
+          eventType: form.eventType === "autre" ? form.customEventType : form.eventType,
+          eventDate: form.eventDate,
+          quoteId: docRef.id,
+        }),
+      }).catch(console.error)
+      
+      // Clear cart after successful quote submission
+      if (cartItems.length > 0) {
+        clearCart()
+      }
+      
+      setSubmitted(true)
+    } catch (error) {
+      console.error("Error creating quote:", error)
+      alert("Une erreur est survenue. Veuillez réessayer.")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (submitted) {
+    return (
+      <section className="bg-secondary py-20 md:py-32">
+        <div className="container mx-auto px-4 text-center">
+          <div className="mx-auto max-w-lg rounded-lg bg-card p-8 shadow-lg">
+            <span className="text-6xl">✨</span>
+            <h1 className="mt-4 font-serif text-3xl font-medium text-accent">Demande envoyée !</h1>
+            <p className="mt-4 text-muted-foreground">
+              Merci pour votre demande de devis. Nous vous recontacterons dans les 24 à 48 heures.
+            </p>
+            <div className="mt-6 space-y-3">
+              <p className="text-sm text-muted-foreground">Vous pouvez aussi nous contacter directement :</p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <a 
+                  href="https://www.instagram.com/dscrea_cakes/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-sm font-medium text-white"
+                >
+                  📸 Instagram
+                </a>
+                <a 
+                  href="mailto:contact@dscreacakes.fr"
+                  className="inline-flex items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground"
+                >
+                  📧 Email
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <>
+      <section className="bg-secondary py-20">
+        <div className="container mx-auto px-4 text-center">
+          <span className="mb-4 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+            Créations Sur Mesure
+          </span>
+          <h1 className="mb-4 font-serif text-5xl font-light text-accent md:text-6xl">
+            Demander un <span className="font-medium text-primary">Devis</span>
+          </h1>
+          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-muted-foreground">
+            {cartImported && selectedProducts.length > 0 
+              ? "Vos produits sélectionnés ont été ajoutés. Complétez le formulaire pour recevoir votre devis personnalisé."
+              : "Sélectionnez les produits qui vous intéressent et décrivez votre projet."
+            }
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-card py-20">
+        <div className="container mx-auto px-4">
+          <form onSubmit={handleSubmit} className="mx-auto max-w-2xl space-y-8">
+            
+            {/* Product Selection */}
+            <div className="rounded-lg border border-primary/20 bg-secondary p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="font-serif text-xl font-medium text-accent">
+                  🎂 Produits sélectionnés
+                </h2>
+                {estimatedTotal > 0 && (
+                  <span className="rounded-full bg-primary px-3 py-1 text-sm font-semibold text-primary-foreground">
+                    ~{estimatedTotal}€
+                  </span>
+                )}
+              </div>
+              
+              {selectedProducts.length === 0 ? (
+                <p className="mb-4 text-sm text-muted-foreground">
+                  Aucun produit sélectionné. Ajoutez des produits ou décrivez votre projet personnalisé ci-dessous.
+                </p>
+              ) : (
+                <div className="space-y-3 mb-4">
+                  {selectedProducts.map((selected, index) => (
+                    <div key={index} className="flex gap-3 items-center bg-card rounded-lg p-3">
+                      <div className="flex-1">
+                        {selected.productName ? (
+                          <span className="font-medium text-accent">{selected.productName}</span>
+                        ) : (
+                          <select
+                            value={selected.productId}
+                            onChange={(e) => updateSelectedProduct(index, "productId", e.target.value)}
+                            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                          >
+                            <option value="">Choisir un produit...</option>
+                            {products.map(product => (
+                              <option key={product.id} value={product.id}>
+                                {product.name} - {product.category} ({product.price}€)
+                              </option>
+                            ))}
+                          </select>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-sm text-muted-foreground">Qté:</span>
+                        <input
+                          type="number"
+                          min="1"
+                          value={selected.quantity}
+                          onChange={(e) => updateSelectedProduct(index, "quantity", parseInt(e.target.value) || 1)}
+                          className="w-16 rounded-md border border-border bg-background px-2 py-2 text-center text-sm"
+                        />
+                      </div>
+                      {selected.price > 0 && (
+                        <span className="text-sm font-medium text-primary">{selected.price * selected.quantity}€</span>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => removeProduct(index)}
+                        className="rounded-md p-2 text-red-500 hover:bg-red-50"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <button
+                type="button"
+                onClick={addProduct}
+                className="inline-flex items-center gap-2 rounded-md border border-dashed border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5"
+              >
+                ➕ Ajouter un produit
+              </button>
+            </div>
+
+            {/* Contact Info */}
+            <div className="space-y-6">
+              <h2 className="font-serif text-xl font-medium text-accent">📋 Vos informations</h2>
+              
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className="mb-2 block text-sm font-medium text-accent">
+                    Nom complet *
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    required
+                    value={form.name}
+                    onChange={(e) => setForm({ ...form, name: e.target.value })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="email" className="mb-2 block text-sm font-medium text-accent">
+                    Email *
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    required
+                    value={form.email}
+                    onChange={(e) => setForm({ ...form, email: e.target.value })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <label htmlFor="phone" className="mb-2 block text-sm font-medium text-accent">
+                    Téléphone
+                  </label>
+                  <input
+                    type="tel"
+                    id="phone"
+                    value={form.phone}
+                    onChange={(e) => setForm({ ...form, phone: e.target.value })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="eventType" className="mb-2 block text-sm font-medium text-accent">
+                    Type d&apos;événement *
+                  </label>
+                  <select
+                    id="eventType"
+                    required
+                    value={form.eventType}
+                    onChange={(e) => setForm({ ...form, eventType: e.target.value, customEventType: "" })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  >
+                    <option value="">Sélectionnez...</option>
+                    <option value="mariage">Mariage</option>
+                    <option value="anniversaire">Anniversaire</option>
+                    <option value="bapteme">Baptême</option>
+                    <option value="entreprise">Événement d&apos;entreprise</option>
+                    <option value="autre">Autre</option>
+                  </select>
+                  {form.eventType === "autre" && (
+                    <input
+                      type="text"
+                      placeholder="Précisez le type d'événement..."
+                      value={form.customEventType}
+                      onChange={(e) => setForm({ ...form, customEventType: e.target.value })}
+                      required
+                      className="mt-2 w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="grid gap-6 md:grid-cols-3">
+                <div>
+                  <label htmlFor="eventDate" className="mb-2 block text-sm font-medium text-accent">
+                    Date de l&apos;événement *
+                  </label>
+                  <input
+                    type="date"
+                    id="eventDate"
+                    required
+                    value={form.eventDate}
+                    onChange={(e) => setForm({ ...form, eventDate: e.target.value })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="guests" className="mb-2 block text-sm font-medium text-accent">
+                    Nombre de personnes
+                  </label>
+                  <input
+                    type="number"
+                    id="guests"
+                    value={form.guests}
+                    onChange={(e) => setForm({ ...form, guests: e.target.value })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="budget" className="mb-2 block text-sm font-medium text-accent">
+                    Budget estimé
+                  </label>
+                  <select
+                    id="budget"
+                    value={form.budget}
+                    onChange={(e) => setForm({ ...form, budget: e.target.value })}
+                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  >
+                    <option value="">Sélectionnez...</option>
+                    <option value="50-100">50€ - 100€</option>
+                    <option value="100-200">100€ - 200€</option>
+                    <option value="200-500">200€ - 500€</option>
+                    <option value="500+">500€ et plus</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="description" className="mb-2 block text-sm font-medium text-accent">
+                  Détails supplémentaires
+                </label>
+                <textarea
+                  id="description"
+                  rows={4}
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                  placeholder="Thème, couleurs, saveurs souhaitées, allergies, personnalisation..."
+                  className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-md bg-accent px-6 py-4 text-sm font-medium text-accent-foreground transition-colors hover:bg-accent/90 disabled:opacity-50"
+            >
+              {loading ? "Envoi en cours..." : `Envoyer ma demande${estimatedTotal > 0 ? ` (~${estimatedTotal}€)` : ""}`}
+            </button>
+
+            {/* Social Links */}
+            <div className="rounded-lg border border-border bg-secondary p-6 text-center">
+              <p className="mb-4 text-sm text-muted-foreground">
+                Vous préférez nous contacter directement ?
+              </p>
+              <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
+                <a 
+                  href="https://www.instagram.com/dscrea_cakes/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-sm font-medium text-white hover:opacity-90"
+                >
+                  📸 Nous suivre sur Instagram
+                </a>
+                <a 
+                  href="mailto:contact@dscreacakes.fr"
+                  className="inline-flex items-center justify-center gap-2 rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground hover:bg-background"
+                >
+                  📧 contact@dscreacakes.fr
+                </a>
+              </div>
+            </div>
+          </form>
+        </div>
+      </section>
+    </>
+  )
+}
