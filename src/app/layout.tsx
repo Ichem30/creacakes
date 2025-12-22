@@ -6,6 +6,7 @@ import { CartProvider } from "@/lib/cart-context"
 import { usePathname } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { FloatingCTA } from "@/components/floating-cta"
 
 export default function RootLayout({
   children,
@@ -25,9 +26,11 @@ export default function RootLayout({
               {children}
             </main>
             {!isDashboard && <Footer />}
+            {!isDashboard && <FloatingCTA />}
           </CartProvider>
         </AuthProvider>
       </body>
     </html>
   )
 }
+
