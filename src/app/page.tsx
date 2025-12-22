@@ -18,27 +18,6 @@ interface Product {
   slug?: string
 }
 
-const testimonials = [
-  {
-    id: "1",
-    name: "Marie L.",
-    text: "Un gâteau de mariage absolument magnifique ! Tous nos invités étaient émerveillés. Merci infiniment !",
-    rating: 5
-  },
-  {
-    id: "2",
-    name: "Sophie D.",
-    text: "Le fraisier était divin. Fraîcheur et finesse au rendez-vous. Je recommande à 100% !",
-    rating: 5
-  },
-  {
-    id: "3",
-    name: "Thomas B.",
-    text: "Commande pour l'anniversaire de ma fille, elle était aux anges ! Gâteau licorne parfait.",
-    rating: 5
-  }
-]
-
 export default function Home() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
@@ -200,40 +179,119 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* How It Works */}
       <section className="bg-card py-20 md:py-32 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
         <div className="container mx-auto px-4 relative z-10">
           <div className="mx-auto mb-16 max-w-3xl text-center">
             <span className="mb-4 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
-              Témoignages
+              Simple & Rapide
             </span>
             <h2 className="mb-4 font-serif text-4xl font-light text-accent md:text-5xl">
-              Ce que disent <span className="font-medium text-primary">nos clients</span>
+              Comment <span className="font-medium text-primary">ça marche</span> ?
             </h2>
+            <p className="text-muted-foreground text-lg">
+              Commander votre gâteau de rêve n&apos;a jamais été aussi simple
+            </p>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
-            {testimonials.map((testimonial, index) => (
+          <div className="grid gap-8 md:grid-cols-4">
+            {[
+              { step: "1", icon: "🎂", title: "Choisissez", desc: "Parcourez notre collection ou imaginez votre création" },
+              { step: "2", icon: "✨", title: "Personnalisez", desc: "Taille, saveur, décoration... tout est possible !" },
+              { step: "3", icon: "📅", title: "Réservez", desc: "Commandez 5 jours à l'avance minimum" },
+              { step: "4", icon: "🎉", title: "Savourez", desc: "Récupérez et régalez vos invités !" }
+            ].map((item, index) => (
               <div 
-                key={testimonial.id} 
-                className="glass rounded-xl p-6 transition-all duration-500 hover:shadow-xl hover:-translate-y-2 hover:shadow-primary/10 group"
+                key={item.step}
+                className="group relative text-center"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="mb-4 flex gap-1">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <span key={i} className="text-xl text-primary transition-transform duration-300 group-hover:scale-110" style={{ transitionDelay: `${i * 50}ms` }}>★</span>
-                  ))}
+                {/* Connector line */}
+                {index < 3 && (
+                  <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-0.5 bg-gradient-to-r from-primary/30 to-primary/10" />
+                )}
+                
+                <div className="relative inline-flex items-center justify-center w-24 h-24 mb-6 rounded-full bg-gradient-to-br from-primary/20 to-primary/5 group-hover:from-primary/30 group-hover:to-primary/10 transition-all duration-300 group-hover:scale-110">
+                  <span className="text-4xl group-hover:animate-bounce-soft">{item.icon}</span>
+                  <span className="absolute -top-2 -right-2 w-8 h-8 rounded-full bg-primary text-primary-foreground text-sm font-bold flex items-center justify-center shadow-lg">
+                    {item.step}
+                  </span>
                 </div>
-                <p className="mb-4 text-muted-foreground italic leading-relaxed">&quot;{testimonial.text}&quot;</p>
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-white font-semibold text-sm">
-                    {testimonial.name.charAt(0)}
-                  </div>
-                  <p className="font-semibold text-accent">{testimonial.name}</p>
-                </div>
+                
+                <h3 className="text-xl font-semibold text-accent mb-2">{item.title}</h3>
+                <p className="text-muted-foreground text-sm">{item.desc}</p>
               </div>
             ))}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Link 
+              href="/quote"
+              className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all duration-300"
+            >
+              Demander un devis personnalisé →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Instagram Gallery */}
+      <section className="bg-secondary py-20 md:py-32">
+        <div className="container mx-auto px-4">
+          <div className="mx-auto mb-12 max-w-3xl text-center">
+            <span className="mb-4 inline-block rounded-full border border-primary/20 bg-primary/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+              @ds.creacakes
+            </span>
+            <h2 className="mb-4 font-serif text-4xl font-light text-accent md:text-5xl">
+              Suivez nos <span className="font-medium text-primary">créations</span>
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Découvrez nos dernières réalisations sur Instagram
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {[
+              "/images/insta-1.jpg",
+              "/images/insta-2.jpg",
+              "/images/insta-3.jpg",
+              "/images/insta-4.jpg",
+            ].map((img, index) => (
+              <a
+                key={index}
+                href="https://www.instagram.com/dscrea_cakes/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group relative aspect-square overflow-hidden rounded-xl"
+              >
+                <Image
+                  src={img}
+                  alt={`Création ${index + 1}`}
+                  fill
+                  className="object-cover transition-transform duration-500 group-hover:scale-110"
+                />
+                <div className="absolute inset-0 bg-accent/0 group-hover:bg-accent/40 transition-colors duration-300 flex items-center justify-center">
+                  <span className="text-white text-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    ♥
+                  </span>
+                </div>
+              </a>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <a 
+              href="https://www.instagram.com/dscrea_cakes/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-3 rounded-full bg-gradient-to-r from-purple-500 via-pink-500 to-orange-500 px-8 py-4 text-white font-medium hover:shadow-xl hover:shadow-pink-500/25 hover:-translate-y-1 transition-all duration-300"
+            >
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              Suivez-nous sur Instagram
+            </a>
           </div>
         </div>
       </section>

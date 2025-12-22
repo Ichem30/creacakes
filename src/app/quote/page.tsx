@@ -1,22 +1,32 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { collection, getDocs, addDoc, query, where, orderBy } from "firebase/firestore"
+import { collection, getDocs, addDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
 import { CustomSelect } from "@/components/custom-select"
+
+interface PriceVariant {
+  label: string
+  price: number
+}
 
 interface Product {
   id: string
   name: string
   price: number
   category: string
+  available?: boolean
+  priceVariants?: PriceVariant[]
+  flavors?: string[]
 }
 
 interface SelectedProduct {
   productId: string
   productName: string
+  variant: string
+  flavor: string
   quantity: number
   price: number
 }
@@ -64,9 +74,12 @@ export default function QuotePage() {
   // Import cart items on mount
   useEffect(() => {
     if (cartItems.length > 0 && !cartImported) {
+      // Cart items already contain variant/flavor info in the name
       const imported = cartItems.map(item => ({
         productId: item.id,
         productName: item.name,
+        variant: "",
+        flavor: "",
         quantity: item.quantity,
         price: item.price,
       }))
@@ -77,13 +90,12 @@ export default function QuotePage() {
 
   async function fetchProducts() {
     try {
-      const q = query(
-        collection(db, "products"),
-        where("available", "==", true),
-        orderBy("category", "asc")
-      )
-      const snapshot = await getDocs(q)
-      const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as Product))
+      // Load all products, sort client-side to avoid composite index requirement
+      const snapshot = await getDocs(collection(db, "products"))
+      const data = snapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() } as Product))
+        .filter(p => p.available !== false) // Filter available
+        .sort((a, b) => (a.category || "").localeCompare(b.category || ""))
       setProducts(data)
     } catch (error) {
       console.error("Error fetching products:", error)
@@ -91,18 +103,37 @@ export default function QuotePage() {
   }
 
   const addProduct = () => {
-    setSelectedProducts([...selectedProducts, { productId: "", productName: "", quantity: 1, price: 0 }])
+    setSelectedProducts([...selectedProducts, { 
+      productId: "", 
+      productName: "", 
+      variant: "",
+      flavor: "",
+      quantity: 1, 
+      price: 0 
+    }])
   }
 
   const updateSelectedProduct = (index: number, field: string, value: string | number) => {
     const updated = [...selectedProducts]
     if (field === "productId") {
       const product = products.find(p => p.id === value)
+      const defaultVariant = product?.priceVariants?.[0]
+      const defaultFlavor = product?.flavors?.[0] || ""
       updated[index] = { 
         ...updated[index], 
         productId: value as string, 
         productName: product?.name || "",
-        price: product?.price || 0,
+        variant: defaultVariant?.label || "",
+        flavor: defaultFlavor,
+        price: defaultVariant?.price || product?.price || 0,
+      }
+    } else if (field === "variant") {
+      const product = products.find(p => p.id === updated[index].productId)
+      const variant = product?.priceVariants?.find(v => v.label === value)
+      updated[index] = { 
+        ...updated[index], 
+        variant: value as string,
+        price: variant?.price || updated[index].price,
       }
     } else {
       updated[index] = { ...updated[index], [field]: value }
@@ -234,49 +265,101 @@ export default function QuotePage() {
                   Aucun produit sélectionné. Ajoutez des produits ou décrivez votre projet personnalisé ci-dessous.
                 </p>
               ) : (
-                <div className="space-y-3 mb-4">
-                  {selectedProducts.map((selected, index) => (
-                    <div key={index} className="flex gap-3 items-center bg-card rounded-lg p-3">
-                      <div className="flex-1">
-                        {selected.productName ? (
-                          <span className="font-medium text-accent">{selected.productName}</span>
-                        ) : (
-                          <select
-                            value={selected.productId}
-                            onChange={(e) => updateSelectedProduct(index, "productId", e.target.value)}
-                            className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                <div className="space-y-4 mb-4">
+                  {selectedProducts.map((selected, index) => {
+                    const product = products.find(p => p.id === selected.productId)
+                    const hasVariants = product?.priceVariants && product.priceVariants.length > 0
+                    const hasFlavors = product?.flavors && product.flavors.length > 0
+                    
+                    return (
+                      <div key={index} className="bg-card rounded-lg p-4 space-y-3">
+                        <div className="flex gap-3 items-start">
+                          {/* Product Selector */}
+                          <div className="flex-1">
+                            <select
+                              value={selected.productId}
+                              onChange={(e) => updateSelectedProduct(index, "productId", e.target.value)}
+                              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
+                            >
+                              <option value="">Choisir un produit...</option>
+                              {products.map(p => (
+                                <option key={p.id} value={p.id}>
+                                  {p.name} - {p.category}
+                                </option>
+                              ))}
+                            </select>
+                          </div>
+                          
+                          {/* Quantity */}
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm text-muted-foreground">×</span>
+                            <input
+                              type="number"
+                              min="1"
+                              value={selected.quantity}
+                              onChange={(e) => updateSelectedProduct(index, "quantity", parseInt(e.target.value) || 1)}
+                              className="w-16 rounded-md border border-border bg-background px-2 py-2 text-center text-sm"
+                            />
+                          </div>
+                          
+                          {/* Price */}
+                          {selected.price > 0 && (
+                            <span className="text-sm font-semibold text-primary min-w-[60px] text-right">
+                              {selected.price * selected.quantity}€
+                            </span>
+                          )}
+                          
+                          {/* Delete */}
+                          <button
+                            type="button"
+                            onClick={() => removeProduct(index)}
+                            className="rounded-md p-2 text-red-500 hover:bg-red-50"
                           >
-                            <option value="">Choisir un produit...</option>
-                            {products.map(product => (
-                              <option key={product.id} value={product.id}>
-                                {product.name} - {product.category} ({product.price}€)
-                              </option>
-                            ))}
-                          </select>
+                            ✕
+                          </button>
+                        </div>
+                        
+                        {/* Variant & Flavor selectors - only show when product is selected */}
+                        {selected.productId && (hasVariants || hasFlavors) && (
+                          <div className="flex gap-3 flex-wrap pl-2 border-l-2 border-primary/20">
+                            {/* Variant (Size) */}
+                            {hasVariants && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">Taille:</span>
+                                <select
+                                  value={selected.variant}
+                                  onChange={(e) => updateSelectedProduct(index, "variant", e.target.value)}
+                                  className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+                                >
+                                  {product?.priceVariants?.map((v, i) => (
+                                    <option key={i} value={v.label}>
+                                      {v.label} ({v.price}€)
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                            
+                            {/* Flavor */}
+                            {hasFlavors && (
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs text-muted-foreground">Saveur:</span>
+                                <select
+                                  value={selected.flavor}
+                                  onChange={(e) => updateSelectedProduct(index, "flavor", e.target.value)}
+                                  className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
+                                >
+                                  {product?.flavors?.map((f, i) => (
+                                    <option key={i} value={f}>{f}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            )}
+                          </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-sm text-muted-foreground">Qté:</span>
-                        <input
-                          type="number"
-                          min="1"
-                          value={selected.quantity}
-                          onChange={(e) => updateSelectedProduct(index, "quantity", parseInt(e.target.value) || 1)}
-                          className="w-16 rounded-md border border-border bg-background px-2 py-2 text-center text-sm"
-                        />
-                      </div>
-                      {selected.price > 0 && (
-                        <span className="text-sm font-medium text-primary">{selected.price * selected.quantity}€</span>
-                      )}
-                      <button
-                        type="button"
-                        onClick={() => removeProduct(index)}
-                        className="rounded-md p-2 text-red-500 hover:bg-red-50"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               )}
               

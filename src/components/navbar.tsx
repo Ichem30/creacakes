@@ -60,6 +60,14 @@ export function Navbar() {
             </li>
             <li>
               <Link 
+                href="/quote" 
+                className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 group"
+              >
+                <span className="transition-transform duration-300 group-hover:scale-110">✨</span> Devis Gratuit
+              </Link>
+            </li>
+            <li>
+              <Link 
                 href="/cart" 
                 className="relative inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 group"
               >
