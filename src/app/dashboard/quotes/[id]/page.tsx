@@ -17,6 +17,7 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { db, storage } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
+import { CustomSelect } from "@/components/custom-select"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -365,17 +366,19 @@ export default function QuoteDetailPage() {
 
           {isAdmin && quote.status !== "converted" && (
             <div className="mt-6 flex flex-wrap gap-2 border-t border-border pt-4">
-              <select
-                value={quote.status}
-                onChange={(e) => updateStatus(e.target.value)}
-                className="rounded-md border border-border bg-background px-3 py-2 text-sm"
-              >
-                <option value="new">Nouveau</option>
-                <option value="contacted">Contacté</option>
-                <option value="quoted">Devis envoyé</option>
-                <option value="accepted">Accepté</option>
-                <option value="declined">Refusé</option>
-              </select>
+              <div className="min-w-[160px]">
+                <CustomSelect
+                  options={[
+                    { value: "new", label: "Nouveau" },
+                    { value: "contacted", label: "Contacté" },
+                    { value: "quoted", label: "Devis envoyé" },
+                    { value: "accepted", label: "Accepté" },
+                    { value: "declined", label: "Refusé" },
+                  ]}
+                  value={quote.status}
+                  onChange={(value) => updateStatus(value)}
+                />
+              </div>
               <button
                 onClick={convertToOrder}
                 disabled={converting}

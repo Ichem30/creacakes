@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { FloatingCTA } from "@/components/floating-cta"
+import { WelcomeModal } from "@/components/welcome-modal"
 
 export default function RootLayout({
   children,
@@ -27,6 +28,7 @@ export default function RootLayout({
             </main>
             {!isDashboard && <Footer />}
             {!isDashboard && <FloatingCTA />}
+            <WelcomeModal />
           </CartProvider>
         </AuthProvider>
       </body>

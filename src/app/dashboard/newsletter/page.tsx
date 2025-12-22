@@ -79,7 +79,7 @@ export default function NewsletterPage() {
     for (let i = 0; i < subscribers.length; i++) {
       const subscriber = subscribers[i]
       try {
-        await fetch("/api/send-email", {
+        const response = await fetch("/api/send-email", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -91,7 +91,13 @@ export default function NewsletterPage() {
             imageUrl,
           }),
         })
-        successCount++
+        
+        if (response.ok) {
+          successCount++
+        } else {
+          const errorData = await response.json()
+          console.error(`Failed to send to ${subscriber.email}:`, errorData)
+        }
       } catch (error) {
         console.error(`Error sending to ${subscriber.email}:`, error)
       }

@@ -50,7 +50,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-accent-foreground/80">
               <li className="flex items-center gap-2 group">
                 <span className="transition-transform duration-300 group-hover:scale-125">📍</span> 
-                <span className="transition-colors duration-300 group-hover:text-primary">Paris et Île-de-France</span>
+                <span className="transition-colors duration-300 group-hover:text-primary">Val-d&apos;Oise (95) et environs</span>
               </li>
               <li className="flex items-center gap-2 group">
                 <span className="transition-transform duration-300 group-hover:scale-125">📧</span> 

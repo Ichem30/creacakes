@@ -117,7 +117,7 @@ export default function SettingsPage() {
               <label className="mb-2 block text-sm font-medium text-accent">Adresse</label>
               <input
                 type="text"
-                defaultValue="Paris et Île-de-France"
+                defaultValue="Val-d'Oise (95) et environs"
                 className="w-full rounded-md border border-border bg-background px-4 py-3 text-muted-foreground"
                 disabled
               />

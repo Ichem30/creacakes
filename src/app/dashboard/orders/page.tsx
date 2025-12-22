@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { collection, getDocs, query, where, orderBy, updateDoc, doc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
+import { CustomSelect } from "@/components/custom-select"
 
 interface Order {
   id: string
@@ -131,17 +132,19 @@ export default function OrdersPage() {
                 <div className="text-right">
                   <p className="font-serif text-xl font-semibold text-accent">{order.total}€</p>
                   {isAdmin && (
-                    <select
-                      value={order.status}
-                      onChange={(e) => updateStatus(order.id, e.target.value)}
-                      className="mt-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
-                    >
-                      <option value="pending">En attente</option>
-                      <option value="confirmed">Confirmée</option>
-                      <option value="preparing">En préparation</option>
-                      <option value="ready">Prête</option>
-                      <option value="delivered">Livrée</option>
-                    </select>
+                    <div className="mt-2 min-w-[140px]">
+                      <CustomSelect
+                        options={[
+                          { value: "pending", label: "En attente" },
+                          { value: "confirmed", label: "Confirmée" },
+                          { value: "preparing", label: "En préparation" },
+                          { value: "ready", label: "Prête" },
+                          { value: "delivered", label: "Livrée" },
+                        ]}
+                        value={order.status}
+                        onChange={(value) => updateStatus(order.id, value)}
+                      />
+                    </div>
                   )}
                 </div>
               </div>

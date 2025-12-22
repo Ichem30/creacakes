@@ -6,6 +6,7 @@ import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { db, storage } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
+import { CustomSelect } from "@/components/custom-select"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -344,18 +345,18 @@ export default function NewProductPage() {
             </div>
           ) : (
             <div className="flex gap-2">
-              <select
-                value={form.category}
-                onChange={(e) => setForm({ ...form, category: e.target.value })}
-                className="flex-1 rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
-              >
-                {categories.length === 0 && (
-                  <option value="">Aucune catégorie - créez-en une</option>
-                )}
-                {categories.map(cat => (
-                  <option key={cat} value={cat}>{cat}</option>
-                ))}
-              </select>
+              <div className="flex-1">
+                <CustomSelect
+                  options={
+                    categories.length === 0 
+                      ? [{ value: "", label: "Aucune catégorie - créez-en une" }]
+                      : categories.map(cat => ({ value: cat, label: cat }))
+                  }
+                  value={form.category}
+                  onChange={(value) => setForm({ ...form, category: value })}
+                  placeholder="Sélectionnez une catégorie"
+                />
+              </div>
               <button
                 type="button"
                 onClick={() => setShowNewCategory(true)}

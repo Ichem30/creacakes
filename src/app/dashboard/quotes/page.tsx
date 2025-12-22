@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { collection, getDocs, query, where, orderBy, updateDoc, doc, addDoc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
+import { CustomSelect } from "@/components/custom-select"
 import Link from "next/link"
 
 interface SelectedProduct {
@@ -182,17 +183,19 @@ export default function QuotesPage() {
                   </p>
                   <p className="text-sm text-muted-foreground">{quote.eventDate}</p>
                   {isAdmin && quote.status !== "converted" && (
-                    <select
-                      value={quote.status}
-                      onChange={(e) => updateStatus(quote.id, e.target.value)}
-                      className="mt-2 rounded-md border border-border bg-background px-2 py-1 text-sm"
-                    >
-                      <option value="new">Nouveau</option>
-                      <option value="contacted">Contacté</option>
-                      <option value="quoted">Devis envoyé</option>
-                      <option value="accepted">Accepté</option>
-                      <option value="declined">Refusé</option>
-                    </select>
+                    <div className="mt-2 min-w-[140px]">
+                      <CustomSelect
+                        options={[
+                          { value: "new", label: "Nouveau" },
+                          { value: "contacted", label: "Contacté" },
+                          { value: "quoted", label: "Devis envoyé" },
+                          { value: "accepted", label: "Accepté" },
+                          { value: "declined", label: "Refusé" },
+                        ]}
+                        value={quote.status}
+                        onChange={(value) => updateStatus(quote.id, value)}
+                      />
+                    </div>
                   )}
                 </div>
               </div>

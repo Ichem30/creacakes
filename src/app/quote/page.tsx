@@ -271,23 +271,33 @@ export default function QuotePage() {
                     const hasVariants = product?.priceVariants && product.priceVariants.length > 0
                     const hasFlavors = product?.flavors && product.flavors.length > 0
                     
+                    // Create options for CustomSelect
+                    const productOptions = [
+                      { value: "", label: "Choisir un produit..." },
+                      ...products.map(p => ({ value: p.id, label: `${p.name} - ${p.category}` }))
+                    ]
+                    
+                    const variantOptions = product?.priceVariants?.map(v => ({
+                      value: v.label,
+                      label: `${v.label} (${v.price}€)`
+                    })) || []
+                    
+                    const flavorOptions = product?.flavors?.map(f => ({
+                      value: f,
+                      label: f
+                    })) || []
+                    
                     return (
                       <div key={index} className="bg-card rounded-lg p-4 space-y-3">
                         <div className="flex gap-3 items-start">
                           {/* Product Selector */}
                           <div className="flex-1">
-                            <select
+                            <CustomSelect
+                              options={productOptions}
                               value={selected.productId}
-                              onChange={(e) => updateSelectedProduct(index, "productId", e.target.value)}
-                              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                            >
-                              <option value="">Choisir un produit...</option>
-                              {products.map(p => (
-                                <option key={p.id} value={p.id}>
-                                  {p.name} - {p.category}
-                                </option>
-                              ))}
-                            </select>
+                              onChange={(value) => updateSelectedProduct(index, "productId", value)}
+                              placeholder="Choisir un produit..."
+                            />
                           </div>
                           
                           {/* Quantity */}
@@ -326,17 +336,14 @@ export default function QuotePage() {
                             {hasVariants && (
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-muted-foreground">Taille:</span>
-                                <select
-                                  value={selected.variant}
-                                  onChange={(e) => updateSelectedProduct(index, "variant", e.target.value)}
-                                  className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
-                                >
-                                  {product?.priceVariants?.map((v, i) => (
-                                    <option key={i} value={v.label}>
-                                      {v.label} ({v.price}€)
-                                    </option>
-                                  ))}
-                                </select>
+                                <div className="min-w-[140px]">
+                                  <CustomSelect
+                                    options={variantOptions}
+                                    value={selected.variant}
+                                    onChange={(value) => updateSelectedProduct(index, "variant", value)}
+                                    placeholder="Taille"
+                                  />
+                                </div>
                               </div>
                             )}
                             
@@ -344,15 +351,14 @@ export default function QuotePage() {
                             {hasFlavors && (
                               <div className="flex items-center gap-2">
                                 <span className="text-xs text-muted-foreground">Saveur:</span>
-                                <select
-                                  value={selected.flavor}
-                                  onChange={(e) => updateSelectedProduct(index, "flavor", e.target.value)}
-                                  className="rounded-md border border-border bg-background px-2 py-1.5 text-sm"
-                                >
-                                  {product?.flavors?.map((f, i) => (
-                                    <option key={i} value={f}>{f}</option>
-                                  ))}
-                                </select>
+                                <div className="min-w-[140px]">
+                                  <CustomSelect
+                                    options={flavorOptions}
+                                    value={selected.flavor}
+                                    onChange={(value) => updateSelectedProduct(index, "flavor", value)}
+                                    placeholder="Saveur"
+                                  />
+                                </div>
                               </div>
                             )}
                           </div>

@@ -93,7 +93,7 @@ export default function Home() {
             </div>
           ) : products.length > 0 ? (
             <div className="mb-12 grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {products.map((product) => (
+              {products.slice(0, 3).map((product) => (
                 <ProductCard 
                   key={product.id} 
                   id={product.id}

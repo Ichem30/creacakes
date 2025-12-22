@@ -103,7 +103,7 @@ export default function ContactPage() {
                     <span className="text-2xl transition-transform duration-300 group-hover:scale-125">📍</span>
                     <div>
                       <h3 className="font-semibold text-accent">Adresse</h3>
-                      <p className="text-muted-foreground">Paris et Île-de-France</p>
+                      <p className="text-muted-foreground">Val-d&apos;Oise (95) et environs</p>
                     </div>
                   </div>
                   <div className="group flex items-start gap-4 p-3 rounded-lg transition-all duration-300 hover:bg-secondary cursor-default">
