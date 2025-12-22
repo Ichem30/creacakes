@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { collection, getDocs, updateDoc, doc, query, orderBy } from "firebase/firestore"
+import { collection, getDocs, updateDoc, doc, query, orderBy, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter } from "next/navigation"
@@ -50,6 +50,21 @@ export default function MessagesPage() {
       setMessages(messages.map(m => m.id === messageId ? { ...m, status: "read" } : m))
     } catch (error) {
       console.error("Error updating message:", error)
+    }
+  }
+
+  async function deleteMessage(messageId: string) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce message ?")) return
+    
+    try {
+      await deleteDoc(doc(db, "contacts", messageId))
+      setMessages(messages.filter(m => m.id !== messageId))
+      if (selectedMessage?.id === messageId) {
+        setSelectedMessage(null)
+      }
+    } catch (error) {
+      console.error("Error deleting message:", error)
+      alert("Erreur lors de la suppression")
     }
   }
 
@@ -125,13 +140,19 @@ export default function MessagesPage() {
                 </p>
               </div>
               <p className="whitespace-pre-wrap text-muted-foreground">{selectedMessage.message}</p>
-              <div className="mt-6">
+              <div className="mt-6 flex gap-2">
                 <a
                   href={`mailto:${selectedMessage.email}?subject=Re: ${selectedMessage.subject}`}
-                  className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
+                  className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90 transition-colors"
                 >
                   📧 Répondre par email
                 </a>
+                <button
+                  onClick={() => deleteMessage(selectedMessage.id)}
+                  className="inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors"
+                >
+                  🗑️ Supprimer
+                </button>
               </div>
             </div>
           )}

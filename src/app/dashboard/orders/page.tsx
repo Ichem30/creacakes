@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { collection, getDocs, query, where, orderBy, updateDoc, doc } from "firebase/firestore"
+import { collection, getDocs, query, where, orderBy, updateDoc, doc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 
@@ -68,6 +68,18 @@ export default function OrdersPage() {
       setOrders(orders.map(o => o.id === orderId ? { ...o, status: newStatus as Order["status"] } : o))
     } catch (error) {
       console.error("Error updating status:", error)
+    }
+  }
+
+  async function deleteOrder(orderId: string) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer cette commande ?")) return
+    
+    try {
+      await deleteDoc(doc(db, "orders", orderId))
+      setOrders(orders.filter(o => o.id !== orderId))
+    } catch (error) {
+      console.error("Error deleting order:", error)
+      alert("Erreur lors de la suppression")
     }
   }
 
@@ -144,6 +156,17 @@ export default function OrdersPage() {
                       </li>
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {isAdmin && (
+                <div className="mt-4 border-t border-border pt-4">
+                  <button
+                    onClick={() => deleteOrder(order.id)}
+                    className="inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors"
+                  >
+                    🗑️ Supprimer
+                  </button>
                 </div>
               )}
             </div>

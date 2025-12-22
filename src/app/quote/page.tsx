@@ -5,6 +5,7 @@ import { collection, getDocs, addDoc, query, where, orderBy } from "firebase/fir
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { useCart } from "@/lib/cart-context"
+import { CustomSelect } from "@/components/custom-select"
 
 interface Product {
   id: string
@@ -19,6 +20,21 @@ interface SelectedProduct {
   quantity: number
   price: number
 }
+
+const eventTypeOptions = [
+  { value: "mariage", label: "Mariage", icon: "💒" },
+  { value: "anniversaire", label: "Anniversaire", icon: "🎂" },
+  { value: "bapteme", label: "Baptême", icon: "👶" },
+  { value: "entreprise", label: "Événement d'entreprise", icon: "🏢" },
+  { value: "autre", label: "Autre", icon: "✨" },
+]
+
+const budgetOptions = [
+  { value: "50-100", label: "50€ - 100€", icon: "💰" },
+  { value: "100-200", label: "100€ - 200€", icon: "💰" },
+  { value: "200-500", label: "200€ - 500€", icon: "💎" },
+  { value: "500+", label: "500€ et plus", icon: "👑" },
+]
 
 export default function QuotePage() {
   const { user } = useAuth()
@@ -323,20 +339,14 @@ export default function QuotePage() {
                   <label htmlFor="eventType" className="mb-2 block text-sm font-medium text-accent">
                     Type d&apos;événement *
                   </label>
-                  <select
+                  <CustomSelect
                     id="eventType"
-                    required
+                    options={eventTypeOptions}
                     value={form.eventType}
-                    onChange={(e) => setForm({ ...form, eventType: e.target.value, customEventType: "" })}
-                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  >
-                    <option value="">Sélectionnez...</option>
-                    <option value="mariage">Mariage</option>
-                    <option value="anniversaire">Anniversaire</option>
-                    <option value="bapteme">Baptême</option>
-                    <option value="entreprise">Événement d&apos;entreprise</option>
-                    <option value="autre">Autre</option>
-                  </select>
+                    onChange={(value) => setForm({ ...form, eventType: value, customEventType: "" })}
+                    placeholder="Sélectionnez un type..."
+                    required
+                  />
                   {form.eventType === "autre" && (
                     <input
                       type="text"
@@ -344,7 +354,7 @@ export default function QuotePage() {
                       value={form.customEventType}
                       onChange={(e) => setForm({ ...form, customEventType: e.target.value })}
                       required
-                      className="mt-2 w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                      className="mt-3 w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all duration-200"
                     />
                   )}
                 </div>
@@ -380,18 +390,13 @@ export default function QuotePage() {
                   <label htmlFor="budget" className="mb-2 block text-sm font-medium text-accent">
                     Budget estimé
                   </label>
-                  <select
+                  <CustomSelect
                     id="budget"
+                    options={budgetOptions}
                     value={form.budget}
-                    onChange={(e) => setForm({ ...form, budget: e.target.value })}
-                    className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                  >
-                    <option value="">Sélectionnez...</option>
-                    <option value="50-100">50€ - 100€</option>
-                    <option value="100-200">100€ - 200€</option>
-                    <option value="200-500">200€ - 500€</option>
-                    <option value="500+">500€ et plus</option>
-                  </select>
+                    onChange={(value) => setForm({ ...form, budget: value })}
+                    placeholder="Sélectionnez un budget..."
+                  />
                 </div>
               </div>
 

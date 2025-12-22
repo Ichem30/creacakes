@@ -24,26 +24,18 @@ export default function CategoriesPage() {
 
   async function fetchCategories() {
     try {
-      const q = query(collection(db, "categories"), orderBy("order", "asc"))
-      const snapshot = await getDocs(q)
+      // Load all categories without orderBy to catch all documents (including those without 'order' field)
+      const snapshot = await getDocs(collection(db, "categories"))
       const data = snapshot.docs.map(doc => ({
         id: doc.id,
-        ...doc.data()
+        name: doc.data().name || "Sans nom",
+        order: doc.data().order ?? 999
       } as Category))
+      // Sort locally
+      data.sort((a, b) => a.order - b.order)
       setCategories(data)
     } catch (error) {
       console.error("Error fetching categories:", error)
-      // Try without orderBy if index doesn't exist
-      try {
-        const snapshot = await getDocs(collection(db, "categories"))
-        const data = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        } as Category))
-        setCategories(data)
-      } catch (e) {
-        console.error("Fallback error:", e)
-      }
     } finally {
       setLoading(false)
     }

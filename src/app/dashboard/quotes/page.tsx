@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { collection, getDocs, query, where, orderBy, updateDoc, doc, addDoc } from "firebase/firestore"
+import { collection, getDocs, query, where, orderBy, updateDoc, doc, addDoc, deleteDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import Link from "next/link"
@@ -126,6 +126,18 @@ export default function QuotesPage() {
     }
   }
 
+  async function deleteQuote(quoteId: string) {
+    if (!confirm("Êtes-vous sûr de vouloir supprimer ce devis ?")) return
+    
+    try {
+      await deleteDoc(doc(db, "quotes", quoteId))
+      setQuotes(quotes.filter(q => q.id !== quoteId))
+    } catch (error) {
+      console.error("Error deleting quote:", error)
+      alert("Erreur lors de la suppression")
+    }
+  }
+
   if (loading) {
     return <div className="text-center py-12">Chargement...</div>
   }
@@ -235,15 +247,21 @@ export default function QuotesPage() {
                   💬 Voir / Discuter
                 </Link>
                 {isAdmin && quote.status !== "converted" && (
-                  <>
-                    <button
-                      onClick={() => convertToOrder(quote)}
-                      disabled={converting === quote.id}
-                      className="inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50"
-                    >
-                      {converting === quote.id ? "..." : "✅ Commande"}
-                    </button>
-                  </>
+                  <button
+                    onClick={() => convertToOrder(quote)}
+                    disabled={converting === quote.id}
+                    className="inline-flex items-center gap-2 rounded-md bg-green-600 px-4 py-2 text-sm font-medium text-white hover:bg-green-700 disabled:opacity-50 transition-colors"
+                  >
+                    {converting === quote.id ? "..." : "✅ Commande"}
+                  </button>
+                )}
+                {isAdmin && (
+                  <button
+                    onClick={() => deleteQuote(quote.id)}
+                    className="inline-flex items-center gap-2 rounded-md bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors"
+                  >
+                    🗑️ Supprimer
+                  </button>
                 )}
               </div>
             </div>

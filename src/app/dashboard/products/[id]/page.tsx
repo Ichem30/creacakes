@@ -1,15 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { doc, getDoc, updateDoc } from "firebase/firestore"
+import { doc, getDoc, updateDoc, collection, getDocs, query, orderBy, addDoc } from "firebase/firestore"
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage"
 import { db, storage } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 import { useRouter, useParams } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
-
-const categories = ["Mariage", "Anniversaire", "Classique", "Fruits", "Tartes", "Custom"]
 
 export default function EditProductPage() {
   const { isAdmin } = useAuth()
@@ -21,14 +19,19 @@ export default function EditProductPage() {
   const [saving, setSaving] = useState(false)
   const [imagePreview, setImagePreview] = useState<string | null>(null)
   const [imageFile, setImageFile] = useState<File | null>(null)
+  const [categories, setCategories] = useState<string[]>([])
+  const [showNewCategory, setShowNewCategory] = useState(false)
+  const [newCategory, setNewCategory] = useState("")
+  const [priceVariants, setPriceVariants] = useState<{label: string, price: string}[]>([
+    { label: "", price: "" }
+  ])
+  const [flavors, setFlavors] = useState<string[]>([""])
   
   const [form, setForm] = useState({
     name: "",
     description: "",
     longDescription: "",
-    price: "",
-    category: "Classique",
-    servings: "",
+    category: "",
     allergens: "",
     available: true,
     image: "",
@@ -39,8 +42,21 @@ export default function EditProductPage() {
       router.push("/dashboard")
       return
     }
+    fetchCategories()
     fetchProduct()
   }, [isAdmin, productId, router])
+
+  async function fetchCategories() {
+    try {
+      // Load all categories without orderBy to catch all documents
+      const snapshot = await getDocs(collection(db, "categories"))
+      const cats = snapshot.docs.map(doc => doc.data().name as string).filter(Boolean)
+      cats.sort((a, b) => a.localeCompare(b))
+      setCategories(cats)
+    } catch (error) {
+      console.error("Error fetching categories:", error)
+    }
+  }
 
   async function fetchProduct() {
     try {
@@ -53,19 +69,87 @@ export default function EditProductPage() {
           name: data.name || "",
           description: data.description || "",
           longDescription: data.longDescription || "",
-          price: data.price?.toString() || "",
-          category: data.category || "Classique",
-          servings: data.servings || "",
+          category: data.category || "",
           allergens: Array.isArray(data.allergens) ? data.allergens.join(", ") : "",
           available: data.available ?? true,
           image: data.image || "",
         })
         setImagePreview(data.image || null)
+        
+        // Load price variants or create from legacy price/servings
+        if (data.priceVariants && data.priceVariants.length > 0) {
+          setPriceVariants(data.priceVariants.map((v: {label: string, price: number}) => ({
+            label: v.label,
+            price: v.price.toString()
+          })))
+        } else if (data.price) {
+          // Legacy product with single price
+          setPriceVariants([{
+            label: data.servings || "Standard",
+            price: data.price.toString()
+          }])
+        }
+        
+        // Load flavors
+        if (data.flavors && data.flavors.length > 0) {
+          setFlavors(data.flavors)
+        }
       }
     } catch (error) {
       console.error("Error fetching product:", error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Price variants handlers
+  const addPriceVariant = () => {
+    setPriceVariants([...priceVariants, { label: "", price: "" }])
+  }
+
+  const removePriceVariant = (index: number) => {
+    if (priceVariants.length > 1) {
+      setPriceVariants(priceVariants.filter((_, i) => i !== index))
+    }
+  }
+
+  const updatePriceVariant = (index: number, field: 'label' | 'price', value: string) => {
+    const updated = [...priceVariants]
+    updated[index][field] = value
+    setPriceVariants(updated)
+  }
+
+  // Flavor handlers
+  const addFlavor = () => {
+    setFlavors([...flavors, ""])
+  }
+
+  const removeFlavor = (index: number) => {
+    if (flavors.length > 1) {
+      setFlavors(flavors.filter((_, i) => i !== index))
+    }
+  }
+
+  const updateFlavor = (index: number, value: string) => {
+    const updated = [...flavors]
+    updated[index] = value
+    setFlavors(updated)
+  }
+
+  const handleAddCategory = async () => {
+    if (!newCategory.trim()) return
+    try {
+      await addDoc(collection(db, "categories"), { 
+        name: newCategory.trim(),
+        order: categories.length,
+        createdAt: new Date().toISOString()
+      })
+      setCategories([...categories, newCategory.trim()])
+      setForm({ ...form, category: newCategory.trim() })
+      setNewCategory("")
+      setShowNewCategory(false)
+    } catch (error) {
+      console.error("Error adding category:", error)
     }
   }
 
@@ -80,6 +164,14 @@ export default function EditProductPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!isAdmin) return
+    
+    // Validate at least one price variant
+    const validVariants = priceVariants.filter(v => v.label.trim() && v.price.trim())
+    if (validVariants.length === 0) {
+      alert("Veuillez ajouter au moins une variante de prix")
+      return
+    }
+    
     setSaving(true)
 
     try {
@@ -91,13 +183,26 @@ export default function EditProductPage() {
         imageUrl = await getDownloadURL(imageRef)
       }
 
+      // Format price variants
+      const formattedVariants = validVariants.map(v => ({
+        label: v.label.trim(),
+        price: parseFloat(v.price)
+      }))
+      
+      // Get minimum price for backward compatibility
+      const minPrice = Math.min(...formattedVariants.map(v => v.price))
+      
+      // Filter valid flavors
+      const validFlavors = flavors.map(f => f.trim()).filter(Boolean)
+
       await updateDoc(doc(db, "products", productId), {
         name: form.name,
         description: form.description,
         longDescription: form.longDescription,
-        price: parseFloat(form.price),
+        price: minPrice,
+        priceVariants: formattedVariants,
+        flavors: validFlavors,
         category: form.category,
-        servings: form.servings,
         allergens: form.allergens.split(",").map(a => a.trim()).filter(Boolean),
         image: imageUrl,
         available: form.available,
@@ -146,54 +251,157 @@ export default function EditProductPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-accent">Nom du produit *</label>
-            <input
-              type="text"
-              required
-              value={form.name}
-              onChange={(e) => setForm({ ...form, name: e.target.value })}
-              className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-accent">Prix (€) *</label>
-            <input
-              type="number"
-              required
-              min="0"
-              step="0.01"
-              value={form.price}
-              onChange={(e) => setForm({ ...form, price: e.target.value })}
-              className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
-            />
-          </div>
+        <div>
+          <label className="mb-2 block text-sm font-medium text-accent">Nom du produit *</label>
+          <input
+            type="text"
+            required
+            value={form.name}
+            onChange={(e) => setForm({ ...form, name: e.target.value })}
+            className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
+          />
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-accent">Catégorie *</label>
-            <select
-              value={form.category}
-              onChange={(e) => setForm({ ...form, category: e.target.value })}
-              className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
+        {/* Price Variants */}
+        <div className="rounded-lg border border-border bg-secondary/30 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <label className="block text-sm font-medium text-accent">Tailles / Prix *</label>
+            <button
+              type="button"
+              onClick={addPriceVariant}
+              className="text-sm text-primary hover:text-primary/80 font-medium"
             >
-              {categories.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
+              + Ajouter une taille
+            </button>
           </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-accent">Portions</label>
-            <input
-              type="text"
-              placeholder="ex: 8-10 personnes"
-              value={form.servings}
-              onChange={(e) => setForm({ ...form, servings: e.target.value })}
-              className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
-            />
+          <div className="space-y-3">
+            {priceVariants.map((variant, index) => (
+              <div key={index} className="flex gap-3 items-center">
+                <input
+                  type="text"
+                  placeholder="ex: 6 personnes"
+                  value={variant.label}
+                  onChange={(e) => updatePriceVariant(index, 'label', e.target.value)}
+                  className="flex-1 rounded-md border border-border bg-background px-4 py-2.5 text-foreground focus:border-primary focus:outline-none"
+                />
+                <div className="flex items-center gap-1">
+                  <input
+                    type="number"
+                    placeholder="Prix"
+                    min="0"
+                    step="0.01"
+                    value={variant.price}
+                    onChange={(e) => updatePriceVariant(index, 'price', e.target.value)}
+                    className="w-24 rounded-md border border-border bg-background px-3 py-2.5 text-foreground focus:border-primary focus:outline-none"
+                  />
+                  <span className="text-muted-foreground">€</span>
+                </div>
+                {priceVariants.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removePriceVariant(index)}
+                    className="text-red-500 hover:text-red-600 px-2"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            💡 Ex: "6 personnes" = 30€, "10 personnes" = 50€
+          </p>
+        </div>
+
+        {/* Flavors */}
+        <div className="rounded-lg border border-border bg-secondary/30 p-4">
+          <div className="flex items-center justify-between mb-4">
+            <label className="block text-sm font-medium text-accent">Saveurs disponibles</label>
+            <button
+              type="button"
+              onClick={addFlavor}
+              className="text-sm text-primary hover:text-primary/80 font-medium"
+            >
+              + Ajouter une saveur
+            </button>
+          </div>
+          <div className="space-y-3">
+            {flavors.map((flavor, index) => (
+              <div key={index} className="flex gap-3 items-center">
+                <input
+                  type="text"
+                  placeholder="ex: Chocolat, Vanille, Fraise..."
+                  value={flavor}
+                  onChange={(e) => updateFlavor(index, e.target.value)}
+                  className="flex-1 rounded-md border border-border bg-background px-4 py-2.5 text-foreground focus:border-primary focus:outline-none"
+                />
+                {flavors.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeFlavor(index)}
+                    className="text-red-500 hover:text-red-600 px-2"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            💡 Laissez vide si le produit n'a qu'une seule saveur
+          </p>
+        </div>
+
+        <div>
+          <label className="mb-2 block text-sm font-medium text-accent">Catégorie *</label>
+          {showNewCategory ? (
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+                placeholder="Nouvelle catégorie"
+                className="flex-1 rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
+              />
+              <button
+                type="button"
+                onClick={handleAddCategory}
+                className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground"
+              >
+                ✓
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowNewCategory(false)}
+                className="rounded-md border border-border px-4 py-2 text-sm"
+              >
+                ✕
+              </button>
+            </div>
+          ) : (
+            <div className="flex gap-2">
+              <select
+                value={form.category}
+                onChange={(e) => setForm({ ...form, category: e.target.value })}
+                className="flex-1 rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none"
+              >
+                {categories.length === 0 && (
+                  <option value="">Aucune catégorie</option>
+                )}
+                {categories.map(cat => (
+                  <option key={cat} value={cat}>{cat}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setShowNewCategory(true)}
+                className="rounded-md border border-primary px-4 py-2 text-sm font-medium text-primary hover:bg-primary/5"
+                title="Ajouter une catégorie"
+              >
+                ➕
+              </button>
+            </div>
+          )}
         </div>
 
         <div>
