@@ -226,33 +226,99 @@ export default function NewsletterPage() {
         <div className="rounded-lg border border-border bg-card p-6">
           <h2 className="mb-6 font-serif text-xl font-medium text-accent">Aperçu</h2>
           
-          <div className="rounded-lg border border-border overflow-hidden">
-            <div style={{ background: "linear-gradient(135deg, #d4a574 0%, #c49a6c 100%)", padding: "20px", textAlign: "center" }}>
-              <h3 style={{ color: "white", margin: 0, fontSize: "24px" }}>D&S Créa&apos;Cakes</h3>
-            </div>
-            <div style={{ padding: "30px", background: "#fff" }}>
-              <p style={{ color: "#333", marginBottom: "10px" }}>Bonjour [Prénom] !</p>
-              
-              {imageUrl && (
-                <img 
-                  src={imageUrl} 
-                  alt="Newsletter" 
-                  style={{ width: "100%", maxHeight: "200px", objectFit: "cover", borderRadius: "8px", marginBottom: "20px" }}
-                />
-              )}
-              
-              <div style={{ whiteSpace: "pre-wrap", color: "#333", lineHeight: "1.6" }}>
-                {message || "Votre message apparaîtra ici..."}
+          <div className="rounded-lg overflow-hidden shadow-lg" style={{ maxWidth: "500px", margin: "0 auto" }}>
+            {/* Email container */}
+            <div style={{ backgroundColor: "#f5f0eb", padding: "20px" }}>
+              <div style={{ backgroundColor: "#ffffff", boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)" }}>
+                {/* Header with Logo */}
+                <div style={{ 
+                  background: "linear-gradient(135deg, #f9d5d4 0%, #f5e6e3 100%)", 
+                  padding: "30px", 
+                  textAlign: "center" 
+                }}>
+                  <img 
+                    src="/logo.png" 
+                    alt="D&S Créa'Cakes" 
+                    style={{ width: "100px", height: "auto", display: "block", margin: "0 auto" }}
+                  />
+                </div>
+
+                {/* Content */}
+                <div style={{ padding: "30px" }}>
+                  <h1 style={{ 
+                    margin: "0 0 15px 0", 
+                    fontFamily: "Georgia, serif", 
+                    fontSize: "22px", 
+                    color: "#4a3428",
+                    fontWeight: 600,
+                    textAlign: "center"
+                  }}>
+                    {subject || "Objet de l'email"}
+                  </h1>
+                  
+                  <p style={{ margin: "0 0 15px 0", fontSize: "14px", lineHeight: 1.6, color: "#5c4a42" }}>
+                    Bonjour [Prénom],
+                  </p>
+                  
+                  {imageUrl && (
+                    <img 
+                      src={imageUrl} 
+                      alt="Newsletter" 
+                      style={{ 
+                        width: "100%", 
+                        height: "auto", 
+                        borderRadius: "8px", 
+                        marginBottom: "15px",
+                        display: "block"
+                      }}
+                    />
+                  )}
+                  
+                  <div style={{ 
+                    fontSize: "14px", 
+                    lineHeight: 1.8, 
+                    color: "#5c4a42", 
+                    whiteSpace: "pre-wrap" 
+                  }}>
+                    {message || "Votre message apparaîtra ici..."}
+                  </div>
+                  
+                  <div style={{ marginTop: "25px", textAlign: "center" }}>
+                    <span style={{ 
+                      display: "inline-block", 
+                      padding: "12px 35px", 
+                      backgroundColor: "#d4a574", 
+                      color: "#ffffff", 
+                      borderRadius: "8px",
+                      fontWeight: 600,
+                      fontSize: "14px",
+                      boxShadow: "0 2px 8px rgba(212, 165, 116, 0.3)"
+                    }}>
+                      Voir nos créations
+                    </span>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div style={{ 
+                  padding: "20px", 
+                  backgroundColor: "#4a3428", 
+                  textAlign: "center" 
+                }}>
+                  <p style={{ margin: "0 0 8px 0", fontSize: "13px", color: "#f5e6e3", fontWeight: 600 }}>
+                    D&S Créa&apos;Cakes
+                  </p>
+                  <p style={{ margin: "0 0 10px 0", fontSize: "11px", color: "#d4a574" }}>
+                    Pâtisseries artisanales & créations personnalisées
+                  </p>
+                  <p style={{ margin: "0", fontSize: "10px", color: "#a08d7f" }}>
+                    Instagram • TikTok • Site Web
+                  </p>
+                  <p style={{ margin: "10px 0 0 0", fontSize: "9px", color: "#a08d7f" }}>
+                    © 2025 D&S Créa&apos;Cakes · <span style={{textDecoration: "underline"}}>Gérer mes préférences</span>
+                  </p>
+                </div>
               </div>
-              
-              <div style={{ marginTop: "30px", textAlign: "center" }}>
-                <span style={{ display: "inline-block", padding: "12px 25px", background: "#d4a574", color: "white", borderRadius: "5px" }}>
-                  Voir nos créations
-                </span>
-              </div>
-            </div>
-            <div style={{ padding: "15px", background: "#f5f5f5", textAlign: "center", fontSize: "12px", color: "#666" }}>
-              Vous recevez cet email car vous avez accepté de recevoir nos offres.
             </div>
           </div>
         </div>

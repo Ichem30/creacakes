@@ -138,6 +138,12 @@ export default function DashboardLayout({
             <div className="px-4 py-2 text-sm text-muted-foreground">
               {user.email}
             </div>
+            <Link 
+              href="/dashboard/profile" 
+              className={`flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium transition-colors ${pathname === "/dashboard/profile" ? "bg-primary/10 text-primary" : "text-foreground hover:bg-secondary"}`}
+            >
+              <span>👤</span> Mon profil
+            </Link>
             <Link href="/" className="flex items-center gap-3 rounded-lg px-4 py-3 text-sm font-medium text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">
               <span>🌐</span> Retour au site
             </Link>
