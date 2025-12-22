@@ -69,7 +69,7 @@ export default function DashboardLayout({
   return (
     <div className="flex min-h-screen bg-secondary">
       {/* Mobile Header */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b border-border bg-card px-4">
+      <header className="md:hidden fixed top-0 left-0 right-0 z-50 flex h-16 items-center justify-between border-b border-border bg-card px-4">
         <div className="flex items-center gap-3">
           <Image src="/logo.png" alt="Logo" width={32} height={32} className="h-8 w-8 object-contain" />
           <span className="font-serif text-lg font-semibold text-accent">Dashboard</span>
@@ -94,7 +94,7 @@ export default function DashboardLayout({
       {/* Backdrop */}
       {sidebarOpen && (
         <div 
-          className="lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+          className="md:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
           onClick={() => setSidebarOpen(false)}
         />
       )}
@@ -103,7 +103,7 @@ export default function DashboardLayout({
       <aside className={`
         fixed left-0 top-0 z-50 h-screen w-72 border-r border-border bg-card
         transform transition-transform duration-300 ease-in-out
-        lg:translate-x-0 lg:w-64
+        md:translate-x-0 md:w-64
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
       `}>
         <div className="flex h-full flex-col">
@@ -119,7 +119,7 @@ export default function DashboardLayout({
             {/* Close button for mobile */}
             <button
               onClick={() => setSidebarOpen(false)}
-              className="lg:hidden ml-auto flex h-8 w-8 items-center justify-center rounded-lg hover:bg-secondary"
+              className="md:hidden ml-auto flex h-8 w-8 items-center justify-center rounded-lg hover:bg-secondary"
               aria-label="Close menu"
             >
               <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -202,8 +202,8 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 pt-16 lg:pt-0 lg:ml-64">
-        <div className="p-4 sm:p-6 lg:p-8">
+      <main className="flex-1 pt-16 md:pt-0 md:ml-64">
+        <div className="p-4 sm:p-6 md:p-8">
           {children}
         </div>
       </main>
