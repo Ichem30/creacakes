@@ -1,38 +1,39 @@
-"use client"
-
+import type { Metadata } from 'next'
 import "./globals.css"
-import { AuthProvider } from "@/lib/auth-context"
-import { CartProvider } from "@/lib/cart-context"
-import { usePathname } from "next/navigation"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { FloatingCTA } from "@/components/floating-cta"
-import { WelcomeModal } from "@/components/welcome-modal"
+import { ClientLayout } from "@/components/client-layout"
+
+export const metadata: Metadata = {
+  title: "D&S Créa'Cakes - Pâtisserie Artisanale",
+  description: "Créations sucrées sur mesure - Gâteaux personnalisés, wedding cakes, pâtisseries fines. Livraison Val-d'Oise et environs.",
+  keywords: ["pâtisserie", "gâteau", "wedding cake", "Val-d'Oise", "artisanal", "sur mesure"],
+  authors: [{ name: "D&S Créa'Cakes" }],
+  icons: {
+    icon: "/logo.png",
+    shortcut: "/logo.png",
+    apple: "/logo.png",
+  },
+  openGraph: {
+    title: "D&S Créa'Cakes - Pâtisserie Artisanale",
+    description: "Créations sucrées sur mesure - Gâteaux personnalisés, wedding cakes, pâtisseries fines.",
+    url: "https://dscreacakes.fr",
+    siteName: "D&S Créa'Cakes",
+    locale: "fr_FR",
+    type: "website",
+  },
+}
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const pathname = usePathname()
-  const isDashboard = pathname?.startsWith("/dashboard")
-
   return (
     <html lang="fr">
       <body className="min-h-screen">
-        <AuthProvider>
-          <CartProvider>
-            {!isDashboard && <Navbar />}
-            <main>
-              {children}
-            </main>
-            {!isDashboard && <Footer />}
-            {!isDashboard && <FloatingCTA />}
-            <WelcomeModal />
-          </CartProvider>
-        </AuthProvider>
+        <ClientLayout>
+          {children}
+        </ClientLayout>
       </body>
     </html>
   )
 }
-
