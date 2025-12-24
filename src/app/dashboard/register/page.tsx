@@ -12,6 +12,10 @@ export default function RegisterPage() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [name, setName] = useState("")
+  const [phone, setPhone] = useState("")
+  const [street, setStreet] = useState("")
+  const [city, setCity] = useState("")
+  const [postalCode, setPostalCode] = useState("")
   const [acceptMarketing, setAcceptMarketing] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -31,16 +35,28 @@ export default function RegisterPage() {
       return
     }
 
+    if (!phone.trim()) {
+      setError("Le numéro de téléphone est requis")
+      return
+    }
+
     setLoading(true)
 
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password)
       
-      // Create user profile in Firestore
+      // Create user profile in Firestore with full info
       await setDoc(doc(db, "users", userCredential.user.uid), {
         email,
         name,
+        phone,
+        address: {
+          street,
+          city,
+          postalCode,
+        },
         acceptMarketing,
+        profileComplete: true,
         createdAt: new Date().toISOString(),
       })
 
@@ -68,8 +84,8 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-secondary">
-      <div className="w-full max-w-md rounded-lg bg-card p-8 shadow-lg">
+    <div className="flex min-h-screen items-center justify-center bg-secondary py-8">
+      <div className="w-full max-w-md rounded-lg bg-card p-8 shadow-lg mx-4">
         <div className="mb-8 text-center">
           <h1 className="font-serif text-3xl font-medium text-accent">Inscription</h1>
           <p className="mt-2 text-muted-foreground">Créez votre compte pour suivre vos commandes</p>
@@ -84,7 +100,7 @@ export default function RegisterPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="name" className="mb-2 block text-sm font-medium text-accent">
-              Nom complet
+              Nom complet <span className="text-red-500">*</span>
             </label>
             <input
               type="text"
@@ -95,9 +111,10 @@ export default function RegisterPage() {
               className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
+
           <div>
             <label htmlFor="email" className="mb-2 block text-sm font-medium text-accent">
-              Email
+              Email <span className="text-red-500">*</span>
             </label>
             <input
               type="email"
@@ -108,9 +125,57 @@ export default function RegisterPage() {
               className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
+
+          <div>
+            <label htmlFor="phone" className="mb-2 block text-sm font-medium text-accent">
+              Téléphone <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              required
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="06 12 34 56 78"
+              className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">Pour vous contacter concernant vos commandes</p>
+          </div>
+
+          {/* Address section */}
+          <div className="rounded-lg border border-border bg-secondary/30 p-4 space-y-3">
+            <h3 className="text-sm font-medium text-accent">📍 Adresse de livraison (optionnel)</h3>
+            
+            <input
+              type="text"
+              value={street}
+              onChange={(e) => setStreet(e.target.value)}
+              placeholder="Rue et numéro"
+              className="w-full rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+            />
+
+            <div className="grid grid-cols-2 gap-3">
+              <input
+                type="text"
+                value={postalCode}
+                onChange={(e) => setPostalCode(e.target.value)}
+                placeholder="Code postal"
+                maxLength={5}
+                className="w-full rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              />
+              <input
+                type="text"
+                value={city}
+                onChange={(e) => setCity(e.target.value)}
+                placeholder="Ville"
+                className="w-full rounded-md border border-border bg-background px-4 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+              />
+            </div>
+          </div>
+
           <div>
             <label htmlFor="password" className="mb-2 block text-sm font-medium text-accent">
-              Mot de passe
+              Mot de passe <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
@@ -121,9 +186,10 @@ export default function RegisterPage() {
               className="w-full rounded-md border border-border bg-background px-4 py-3 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
+
           <div>
             <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium text-accent">
-              Confirmer le mot de passe
+              Confirmer le mot de passe <span className="text-red-500">*</span>
             </label>
             <input
               type="password"
