@@ -24,6 +24,9 @@ export function ProductCard({ id, slug, title, description, price, category, ima
             src={image || "/placeholder.jpg"}
             alt={title}
             fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+            quality={75}
+            loading="lazy"
             className={`object-cover transition-all duration-700 group-hover:scale-110 ${!available ? 'grayscale-[30%]' : ''}`}
           />
           {/* Gradient overlay on hover */}
