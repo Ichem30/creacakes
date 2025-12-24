@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import "./globals.css"
 import { ClientLayout } from "@/components/client-layout"
+import { GoogleAnalytics } from "@/components/google-analytics"
 
 export const metadata: Metadata = {
   title: "D&S Créa'Cakes - Pâtisserie Artisanale",
@@ -30,6 +31,7 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className="min-h-screen">
+        <GoogleAnalytics />
         <ClientLayout>
           {children}
         </ClientLayout>
