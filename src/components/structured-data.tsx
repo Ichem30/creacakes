@@ -4,15 +4,16 @@ export function StructuredData() {
     "@type": "FoodEstablishment",
     "@id": "https://dscreacakes.fr",
     "name": "D&S Créa'Cakes",
-    "description": "Pâtisserie artisanale spécialisée dans les créations sur mesure : gâteaux personnalisés, wedding cakes, number cakes et pâtisseries fines. Livraison Val-d'Oise et Île-de-France.",
+    "description": "Pâtisserie artisanale spécialisée dans les créations sur mesure : gâteaux personnalisés, wedding cakes, bento cakes, layer cakes, bûches et pâtisseries fines. Livraison Val-d'Oise et Île-de-France.",
     "url": "https://dscreacakes.fr",
     "logo": "https://dscreacakes.fr/logo.png",
     "image": "https://dscreacakes.fr/logo.png",
-    "telephone": "+33600000000", // À remplacer par le vrai numéro
+    "telephone": "+33600000000",
     "email": "contact@dscreacakes.fr",
     "address": {
       "@type": "PostalAddress",
       "addressLocality": "Val-d'Oise",
+      "postalCode": "95000",
       "addressRegion": "Île-de-France",
       "addressCountry": "FR"
     },
@@ -28,40 +29,84 @@ export function StructuredData() {
     ],
     "priceRange": "€€",
     "servesCuisine": "Pâtisserie française",
-    "hasOfferCatalog": {
-      "@type": "OfferCatalog",
-      "name": "Nos créations",
-      "itemListElement": [
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Product",
-            "name": "Wedding Cake",
-            "description": "Gâteau de mariage sur mesure"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Product",
-            "name": "Number Cake",
-            "description": "Gâteau en forme de chiffre ou lettre"
-          }
-        },
-        {
-          "@type": "Offer",
-          "itemOffered": {
-            "@type": "Product",
-            "name": "Gâteau personnalisé",
-            "description": "Création unique pour anniversaires et événements"
-          }
-        }
-      ]
-    },
     "sameAs": [
-      "https://www.instagram.com/dscreacakes" // À remplacer si Instagram existe
+      "https://www.instagram.com/dscreacakes"
     ]
   }
+
+  // Produits avec offers pour éviter les erreurs Google
+  const products = [
+    {
+      name: "Wedding Cake",
+      description: "Gâteau de mariage sur mesure, élégant et personnalisé",
+      price: "150",
+    },
+    {
+      name: "Bento Cake",
+      description: "Mini gâteau individuel personnalisé, idéal pour surprendre",
+      price: "25",
+    },
+    {
+      name: "Layer Cake",
+      description: "Gâteau à étages moelleux avec ganache ou crème",
+      price: "45",
+    },
+    {
+      name: "Number Cake",
+      description: "Gâteau en forme de chiffre ou lettre",
+      price: "55",
+    },
+    {
+      name: "Gâteau d'anniversaire",
+      description: "Création unique et personnalisée pour célébrer",
+      price: "40",
+    },
+    {
+      name: "Bûche de Noël",
+      description: "Bûche artisanale pour les fêtes de fin d'année",
+      price: "35",
+    },
+    {
+      name: "Cupcakes",
+      description: "Petits gâteaux décorés, parfaits pour les événements",
+      price: "3",
+    },
+    {
+      name: "Cookies artisanaux",
+      description: "Cookies moelleux faits maison",
+      price: "2",
+    },
+    {
+      name: "Cake Design",
+      description: "Gâteau sculptée avec décoration personnalisée",
+      price: "80",
+    },
+    {
+      name: "Drip Cake",
+      description: "Gâteau avec effet coulant de chocolat ou caramel",
+      price: "50",
+    },
+  ]
+
+  const productsSchema = products.map((product) => ({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": product.name,
+    "description": product.description,
+    "image": "https://dscreacakes.fr/logo.png",
+    "brand": {
+      "@type": "Brand",
+      "name": "D&S Créa'Cakes"
+    },
+    "offers": {
+      "@type": "Offer",
+      "priceCurrency": "EUR",
+      "price": product.price,
+      "priceValidUntil": "2025-12-31",
+      "availability": "https://schema.org/InStock",
+      "url": "https://dscreacakes.fr/quote"
+    }
+  }))
 
   const websiteSchema = {
     "@context": "https://schema.org",
@@ -109,6 +154,15 @@ export function StructuredData() {
           __html: JSON.stringify(localBusinessSchema),
         }}
       />
+      {productsSchema.map((product, index) => (
+        <script
+          key={index}
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(product),
+          }}
+        />
+      ))}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

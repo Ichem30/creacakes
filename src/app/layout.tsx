@@ -21,6 +21,20 @@ export const metadata: Metadata = {
     siteName: "D&S Créa'Cakes",
     locale: "fr_FR",
     type: "website",
+    images: [
+      {
+        url: "https://dscreacakes.fr/logo.png",
+        width: 800,
+        height: 600,
+        alt: "D&S Créa'Cakes - Pâtisserie Artisanale",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "D&S Créa'Cakes - Pâtisserie Artisanale",
+    description: "Créations sucrées sur mesure - Gâteaux personnalisés, wedding cakes, pâtisseries fines.",
+    images: ["https://dscreacakes.fr/logo.png"],
   },
 }
 
