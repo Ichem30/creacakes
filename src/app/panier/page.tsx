@@ -23,7 +23,7 @@ export default function CartPage() {
             Découvrez nos délicieuses créations et ajoutez-les à votre panier.
           </p>
           <Link 
-            href="/products" 
+            href="/nos-creations" 
             className="mt-8 inline-flex items-center gap-2 justify-center rounded-md bg-accent px-8 py-3 text-sm font-medium text-accent-foreground transition-all duration-300 hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-1 animate-fade-in-up group"
             style={{ animationDelay: '0.2s' }}
           >
@@ -133,7 +133,7 @@ export default function CartPage() {
                   <span className="text-primary">{total}€</span>
                 </div>
                 <Link 
-                  href="/quote"
+                  href="/devis"
                   className="group relative block w-full rounded-md bg-accent px-6 py-4 text-center text-sm font-medium text-accent-foreground transition-all duration-300 hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-1 overflow-hidden"
                 >
                   <span className="relative z-10">Demander un devis</span>

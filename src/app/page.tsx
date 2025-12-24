@@ -114,7 +114,7 @@ export default function Home() {
 
           <div className="text-center">
             <Link 
-              href="/products" 
+              href="/nos-creations" 
               className="group inline-flex items-center gap-2 justify-center rounded-md border-2 border-accent bg-transparent px-8 py-3 text-sm font-medium text-accent transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1"
             >
               Voir toute la collection
@@ -227,7 +227,7 @@ export default function Home() {
 
           <div className="mt-12 text-center">
             <Link 
-              href="/quote"
+              href="/devis"
               className="inline-flex items-center gap-2 text-primary font-medium hover:gap-3 transition-all duration-300"
             >
               Demander un devis personnalisé →
@@ -302,7 +302,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <Link 
-              href="/quote" 
+              href="/devis" 
               className="group relative inline-flex items-center justify-center rounded-md bg-primary px-10 py-4 text-sm font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 overflow-hidden"
             >
               <span className="relative z-10">Demander un devis gratuit</span>

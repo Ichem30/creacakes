@@ -14,13 +14,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 1,
     },
     {
-      url: `${baseUrl}/products`,
+      url: `${baseUrl}/nos-creations`,
       lastModified: new Date(),
       changeFrequency: 'weekly',
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/quote`,
+      url: `${baseUrl}/devis`,
       lastModified: new Date(),
       changeFrequency: 'monthly',
       priority: 0.8,
@@ -45,7 +45,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const productsSnapshot = await getDocs(collection(db, 'products'))
     productPages = productsSnapshot.docs.map((doc) => ({
-      url: `${baseUrl}/products/${doc.id}`,
+      url: `${baseUrl}/nos-creations/${doc.id}`,
       lastModified: new Date(),
       changeFrequency: 'weekly' as const,
       priority: 0.8,

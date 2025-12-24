@@ -28,12 +28,12 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/products" className="text-sm text-accent-foreground/80 transition-all duration-300 hover:text-primary hover:translate-x-1 inline-block">
+                <Link href="/nos-creations" className="text-sm text-accent-foreground/80 transition-all duration-300 hover:text-primary hover:translate-x-1 inline-block">
                   Nos Gâteaux
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-sm text-accent-foreground/80 transition-all duration-300 hover:text-primary hover:translate-x-1 inline-block">
+                <Link href="/a-propos" className="text-sm text-accent-foreground/80 transition-all duration-300 hover:text-primary hover:translate-x-1 inline-block">
                   À Propos
                 </Link>
               </li>

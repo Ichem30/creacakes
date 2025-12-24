@@ -103,7 +103,7 @@ export function StructuredData() {
       "price": product.price,
       "priceValidUntil": "2025-12-31",
       "availability": "https://schema.org/InStock",
-      "url": "https://dscreacakes.fr/quote"
+      "url": "https://dscreacakes.fr/devis"
     }
   }))
 
@@ -115,7 +115,7 @@ export function StructuredData() {
     "description": "Pâtisserie artisanale - Créations sur mesure",
     "potentialAction": {
       "@type": "SearchAction",
-      "target": "https://dscreacakes.fr/products?q={search_term_string}",
+      "target": "https://dscreacakes.fr/nos-creations?q={search_term_string}",
       "query-input": "required name=search_term_string"
     }
   }
@@ -134,13 +134,13 @@ export function StructuredData() {
         "@type": "ListItem",
         "position": 2,
         "name": "Nos créations",
-        "item": "https://dscreacakes.fr/products"
+        "item": "https://dscreacakes.fr/nos-creations"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": "Demander un devis",
-        "item": "https://dscreacakes.fr/quote"
+        "item": "https://dscreacakes.fr/devis"
       }
     ]
   }

@@ -31,7 +31,7 @@ export default function NotFound() {
             <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />
           </Link>
           <Link 
-            href="/products" 
+            href="/nos-creations" 
             className="inline-flex items-center gap-2 justify-center rounded-md border-2 border-accent bg-transparent px-8 py-4 text-sm font-medium text-accent transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1 group"
           >
             Voir nos gâteaux

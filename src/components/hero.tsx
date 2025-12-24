@@ -35,13 +35,13 @@ export function Hero() {
 
             <div className="flex flex-col gap-4 sm:flex-row sm:justify-center md:justify-start animate-fade-in-up" style={{ animationDelay: '0.6s' }}>
               <Link 
-                href="/products" 
+                href="/nos-creations" 
                 className="group relative inline-flex items-center justify-center rounded-md bg-accent px-6 py-3 text-sm font-medium text-accent-foreground transition-all duration-300 hover:bg-accent/90 hover:shadow-xl hover:shadow-accent/20 hover:-translate-y-1"
               >
                 <span className="relative z-10">Découvrir nos créations</span>
               </Link>
               <Link 
-                href="/quote" 
+                href="/devis" 
                 className="inline-flex items-center justify-center rounded-md border-2 border-accent bg-transparent px-6 py-3 text-sm font-medium text-accent transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1"
               >
                 Demander un devis

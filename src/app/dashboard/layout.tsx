@@ -49,11 +49,11 @@ export default function DashboardLayout({
   const navLinks = [
     { href: "/dashboard", label: "Accueil", icon: "🏠", exact: true },
     { href: "/dashboard/orders", label: isAdmin ? "Commandes" : "Mes commandes", icon: "📦" },
-    { href: "/dashboard/quotes", label: isAdmin ? "Devis" : "Mes devis", icon: "📝" },
+    { href: "/dashboard/deviss", label: isAdmin ? "Devis" : "Mes devis", icon: "📝" },
   ]
 
   const adminLinks = isAdmin ? [
-    { href: "/dashboard/products", label: "Produits", icon: "🎂" },
+    { href: "/dashboard/nos-creations", label: "Produits", icon: "🎂" },
     { href: "/dashboard/categories", label: "Catégories", icon: "🏷️" },
     { href: "/dashboard/messages", label: "Messages", icon: "📧" },
     { href: "/dashboard/customers", label: "Clients", icon: "👥" },

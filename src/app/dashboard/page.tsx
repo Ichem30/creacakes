@@ -96,7 +96,7 @@ export default function DashboardHome() {
               </p>
             </div>
           </div>
-          <Link href="/dashboard/quotes" className="mt-4 block text-sm text-primary hover:underline">
+          <Link href="/dashboard/deviss" className="mt-4 block text-sm text-primary hover:underline">
             Voir les devis →
           </Link>
         </div>
@@ -113,7 +113,7 @@ export default function DashboardHome() {
                   </p>
                 </div>
               </div>
-              <Link href="/dashboard/products" className="mt-4 block text-sm text-primary hover:underline">
+              <Link href="/dashboard/nos-creations" className="mt-4 block text-sm text-primary hover:underline">
                 Gérer les produits →
               </Link>
             </div>
@@ -143,7 +143,7 @@ export default function DashboardHome() {
           {isAdmin ? (
             <>
               <Link 
-                href="/dashboard/products/new"
+                href="/dashboard/nos-creations/new"
                 className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
               >
                 ➕ Ajouter un produit
@@ -158,13 +158,13 @@ export default function DashboardHome() {
           ) : (
             <>
               <Link 
-                href="/products"
+                href="/nos-creations"
                 className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
               >
                 🎂 Commander un gâteau
               </Link>
               <Link 
-                href="/quote"
+                href="/devis"
                 className="inline-flex items-center gap-2 rounded-md border border-border px-4 py-2 text-sm font-medium text-foreground hover:bg-secondary"
               >
                 📝 Demander un devis

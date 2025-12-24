@@ -173,7 +173,7 @@ export default function NewProductPage() {
       })
 
 
-      router.push("/dashboard/products")
+      router.push("/dashboard/nos-creations")
     } catch (error) {
       console.error("Error creating product:", error)
       alert("Erreur lors de la création du produit")
@@ -189,7 +189,7 @@ export default function NewProductPage() {
   return (
     <div>
       <div className="mb-8">
-        <Link href="/dashboard/products" className="text-sm text-muted-foreground hover:text-primary">
+        <Link href="/dashboard/nos-creations" className="text-sm text-muted-foreground hover:text-primary">
           ← Retour aux produits
         </Link>
         <h1 className="mt-2 font-serif text-3xl font-medium text-accent">Nouveau produit</h1>
@@ -423,7 +423,7 @@ export default function NewProductPage() {
             {loading ? "Création..." : "Créer le produit"}
           </button>
           <Link
-            href="/dashboard/products"
+            href="/dashboard/nos-creations"
             className="rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground hover:bg-secondary"
           >
             Annuler

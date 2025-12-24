@@ -31,12 +31,12 @@ export function Navbar() {
               </Link>
             </li>
             <li>
-              <Link href="/products" className="underline-animation text-sm font-medium text-foreground transition-colors hover:text-primary py-2">
+              <Link href="/nos-creations" className="underline-animation text-sm font-medium text-foreground transition-colors hover:text-primary py-2">
                 Nos Gâteaux
               </Link>
             </li>
             <li>
-              <Link href="/about" className="underline-animation text-sm font-medium text-foreground transition-colors hover:text-primary py-2">
+              <Link href="/a-propos" className="underline-animation text-sm font-medium text-foreground transition-colors hover:text-primary py-2">
                 À Propos
               </Link>
             </li>
@@ -60,7 +60,7 @@ export function Navbar() {
             </li>
             <li>
               <Link 
-                href="/quote" 
+                href="/devis" 
                 className="inline-flex items-center gap-2 rounded-md bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30 hover:-translate-y-0.5 group"
               >
                 <span className="transition-transform duration-300 group-hover:scale-110">✨</span> Devis Gratuit
@@ -68,7 +68,7 @@ export function Navbar() {
             </li>
             <li>
               <Link 
-                href="/cart" 
+                href="/panier" 
                 className="relative inline-flex items-center gap-2 rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-all duration-300 hover:bg-accent/90 hover:shadow-lg hover:shadow-accent/30 hover:-translate-y-0.5 group"
               >
                 <span className="transition-transform duration-300 group-hover:scale-110">🛒</span> Panier
@@ -83,7 +83,7 @@ export function Navbar() {
 
           {/* Mobile Menu Button */}
           <div className="flex items-center gap-4 lg:hidden">
-            <Link href="/cart" className="relative group">
+            <Link href="/panier" className="relative group">
               <span className="text-2xl transition-transform duration-300 group-hover:scale-110 inline-block">🛒</span>
               {totalItems > 0 && (
                 <span className="absolute -right-2 -top-2 flex h-5 w-5 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground animate-scale-in shadow-md">
@@ -125,7 +125,7 @@ export function Navbar() {
             </li>
             <li>
               <Link 
-                href="/products" 
+                href="/nos-creations" 
                 onClick={() => setMobileMenuOpen(false)}
                 className="block rounded-lg px-4 py-3 text-lg font-medium text-foreground hover:bg-secondary hover:text-primary transition-all duration-200"
               >
@@ -134,7 +134,7 @@ export function Navbar() {
             </li>
             <li>
               <Link 
-                href="/about" 
+                href="/a-propos" 
                 onClick={() => setMobileMenuOpen(false)}
                 className="block rounded-lg px-4 py-3 text-lg font-medium text-foreground hover:bg-secondary hover:text-primary transition-all duration-200"
               >

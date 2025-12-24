@@ -157,7 +157,7 @@ export default function QuotesPage() {
             {isAdmin ? "Les demandes de devis apparaîtront ici." : "Vos demandes de devis apparaîtront ici."}
           </p>
           {!isAdmin && (
-            <Link href="/quote" className="mt-4 inline-block rounded-md bg-accent px-6 py-3 text-sm font-medium text-accent-foreground">
+            <Link href="/devis" className="mt-4 inline-block rounded-md bg-accent px-6 py-3 text-sm font-medium text-accent-foreground">
               Demander un devis
             </Link>
           )}
@@ -244,7 +244,7 @@ export default function QuotesPage() {
               {/* Admin Actions */}
               <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
                 <Link
-                  href={`/dashboard/quotes/${quote.id}`}
+                  href={`/dashboard/deviss/${quote.id}`}
                   className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
                 >
                   💬 Voir / Discuter

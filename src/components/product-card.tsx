@@ -14,7 +14,7 @@ interface ProductCardProps {
 
 export function ProductCard({ id, slug, title, description, price, category, image, available = true }: ProductCardProps) {
   // Use slug if available, fallback to id
-  const href = slug ? `/products/${slug}` : `/products/${id}`
+  const href = slug ? `/nos-creations/${slug}` : `/nos-creations/${id}`
   
   return (
     <Link href={href} className="group block">

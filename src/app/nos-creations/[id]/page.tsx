@@ -109,7 +109,7 @@ export default function ProductPage() {
         <div className="container mx-auto px-4 text-center animate-fade-in-up">
           <span className="text-6xl block mb-4">🎂</span>
           <h1 className="font-serif text-3xl text-accent">Produit non trouvé</h1>
-          <Link href="/products" className="mt-6 inline-flex items-center gap-2 text-primary hover:underline transition-all hover:gap-3">
+          <Link href="/nos-creations" className="mt-6 inline-flex items-center gap-2 text-primary hover:underline transition-all hover:gap-3">
             ← Retour aux produits
           </Link>
         </div>
@@ -155,7 +155,7 @@ export default function ProductPage() {
       <div className="absolute bottom-0 left-0 w-72 h-72 bg-secondary rounded-full blur-3xl translate-y-1/2 -translate-x-1/2" />
       
       <div className="container mx-auto px-4 relative z-10">
-        <Link href="/products" className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:gap-3 group">
+        <Link href="/nos-creations" className="mb-8 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-all duration-300 hover:gap-3 group">
           <span className="transition-transform duration-300 group-hover:-translate-x-1">←</span> Retour aux produits
         </Link>
         
@@ -259,7 +259,7 @@ export default function ProductPage() {
                 {!added && <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />}
               </button>
               <Link 
-                href="/quote" 
+                href="/devis" 
                 className="inline-flex items-center justify-center rounded-md border-2 border-accent bg-transparent px-8 py-4 text-sm font-medium text-accent transition-all duration-300 hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:-translate-y-1"
               >
                 Demander un devis personnalisé

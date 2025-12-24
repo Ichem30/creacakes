@@ -9,7 +9,7 @@ export function FloatingCTA() {
   const pathname = usePathname()
   
   // Don't show on quote page or dashboard
-  const shouldHide = pathname?.startsWith('/quote') || pathname?.startsWith('/dashboard')
+  const shouldHide = pathname?.startsWith('/devis') || pathname?.startsWith('/dashboard')
 
   useEffect(() => {
     const handleScroll = () => {
@@ -25,7 +25,7 @@ export function FloatingCTA() {
 
   return (
     <Link
-      href="/quote"
+      href="/devis"
       className={`fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-4 text-sm font-semibold text-primary-foreground shadow-2xl shadow-primary/40 transition-all duration-500 hover:bg-primary/90 hover:scale-105 hover:shadow-primary/50 ${
         isVisible 
           ? 'translate-y-0 opacity-100' 

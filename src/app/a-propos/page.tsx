@@ -111,14 +111,14 @@ export default function AboutPage() {
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
             <Link 
-              href="/products" 
+              href="/nos-creations" 
               className="group relative inline-flex items-center justify-center rounded-md bg-primary px-10 py-4 text-sm font-medium text-primary-foreground transition-all duration-300 hover:bg-primary/90 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-1 overflow-hidden"
             >
               <span className="relative z-10">Voir nos créations</span>
               <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />
             </Link>
             <Link 
-              href="/quote" 
+              href="/devis" 
               className="inline-flex items-center justify-center rounded-md border-2 border-accent-foreground/30 bg-transparent px-10 py-4 text-sm font-medium text-accent-foreground transition-all duration-300 hover:bg-accent-foreground/10 hover:border-accent-foreground/50 hover:-translate-y-1 hover:shadow-lg"
             >
               Demander un devis
