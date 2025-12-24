@@ -11,7 +11,13 @@ interface Customer {
   email: string
   name?: string
   phone?: string
+  address?: {
+    street?: string
+    city?: string
+    postalCode?: string
+  }
   acceptMarketing?: boolean
+  profileComplete?: boolean
   createdAt: string
   updatedAt?: string
 }
@@ -164,6 +170,34 @@ export default function CustomersPage() {
                       <p className="text-xs text-muted-foreground uppercase tracking-wide">Newsletter</p>
                       <p className={selectedCustomer.acceptMarketing ? "text-green-600" : "text-muted-foreground"}>
                         {selectedCustomer.acceptMarketing ? "Inscrit aux offres" : "Non inscrit"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">📍</span>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Adresse de livraison</p>
+                      {selectedCustomer.address?.street || selectedCustomer.address?.city ? (
+                        <div className="text-accent">
+                          {selectedCustomer.address.street && <p>{selectedCustomer.address.street}</p>}
+                          <p>
+                            {selectedCustomer.address.postalCode && `${selectedCustomer.address.postalCode} `}
+                            {selectedCustomer.address.city}
+                          </p>
+                        </div>
+                      ) : (
+                        <p className="text-muted-foreground">Non renseignée</p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex items-start gap-3">
+                    <span className="text-lg">✅</span>
+                    <div>
+                      <p className="text-xs text-muted-foreground uppercase tracking-wide">Profil</p>
+                      <p className={selectedCustomer.profileComplete ? "text-green-600" : "text-orange-500"}>
+                        {selectedCustomer.profileComplete ? "Complet" : "Incomplet"}
                       </p>
                     </div>
                   </div>
