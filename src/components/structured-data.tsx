@@ -8,7 +8,6 @@ export function StructuredData() {
     "url": "https://dscreacakes.fr",
     "logo": "https://dscreacakes.fr/logo.png",
     "image": "https://dscreacakes.fr/logo.png",
-    "telephone": "+33600000000",
     "email": "contact@dscreacakes.fr",
     "address": {
       "@type": "PostalAddress",
@@ -30,7 +29,7 @@ export function StructuredData() {
     "priceRange": "€€",
     "servesCuisine": "Pâtisserie française",
     "sameAs": [
-      "https://www.instagram.com/dscreacakes"
+      "https://www.instagram.com/dscrea_cakes/"
     ]
   }
 
