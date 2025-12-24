@@ -6,7 +6,7 @@ import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 
 export default function ProfilePage() {
-  const { user } = useAuth()
+  const { user, refreshUserProfile } = useAuth()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -14,6 +14,9 @@ export default function ProfilePage() {
   const [form, setForm] = useState({
     name: "",
     phone: "",
+    street: "",
+    city: "",
+    postalCode: "",
     acceptMarketing: false,
   })
 
@@ -28,6 +31,9 @@ export default function ProfilePage() {
           setForm({
             name: data.name || "",
             phone: data.phone || "",
+            street: data.address?.street || "",
+            city: data.address?.city || "",
+            postalCode: data.address?.postalCode || "",
             acceptMarketing: data.acceptMarketing || false,
           })
         }
@@ -50,9 +56,16 @@ export default function ProfilePage() {
       await updateDoc(doc(db, "users", user.uid), {
         name: form.name,
         phone: form.phone,
+        address: {
+          street: form.street,
+          city: form.city,
+          postalCode: form.postalCode,
+        },
         acceptMarketing: form.acceptMarketing,
+        profileComplete: !!(form.name && form.phone),
         updatedAt: new Date().toISOString(),
       })
+      await refreshUserProfile()
       setSaved(true)
       setTimeout(() => setSaved(false), 3000)
     } catch (error) {
@@ -90,26 +103,73 @@ export default function ProfilePage() {
 
           {/* Name */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-accent">Nom complet</label>
+            <label className="mb-2 block text-sm font-medium text-accent">
+              Nom complet <span className="text-red-500">*</span>
+            </label>
             <input
               type="text"
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               placeholder="Votre nom"
               className="w-full rounded-md border border-border bg-background px-4 py-3 focus:border-primary focus:outline-none"
+              required
             />
           </div>
 
           {/* Phone */}
           <div>
-            <label className="mb-2 block text-sm font-medium text-accent">Téléphone</label>
+            <label className="mb-2 block text-sm font-medium text-accent">
+              Téléphone <span className="text-red-500">*</span>
+            </label>
             <input
               type="tel"
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
               placeholder="06 XX XX XX XX"
               className="w-full rounded-md border border-border bg-background px-4 py-3 focus:border-primary focus:outline-none"
+              required
             />
+            <p className="mt-1 text-xs text-muted-foreground">Pour vous contacter concernant vos commandes</p>
+          </div>
+
+          {/* Address section */}
+          <div className="rounded-lg border border-border bg-secondary/30 p-4 space-y-4">
+            <h3 className="font-medium text-accent">📍 Adresse de livraison</h3>
+            
+            <div>
+              <label className="mb-2 block text-sm font-medium text-accent">Rue et numéro</label>
+              <input
+                type="text"
+                value={form.street}
+                onChange={(e) => setForm({ ...form, street: e.target.value })}
+                placeholder="12 rue des Pâtissiers"
+                className="w-full rounded-md border border-border bg-background px-4 py-3 focus:border-primary focus:outline-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="mb-2 block text-sm font-medium text-accent">Code postal</label>
+                <input
+                  type="text"
+                  value={form.postalCode}
+                  onChange={(e) => setForm({ ...form, postalCode: e.target.value })}
+                  placeholder="95000"
+                  maxLength={5}
+                  className="w-full rounded-md border border-border bg-background px-4 py-3 focus:border-primary focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-2 block text-sm font-medium text-accent">Ville</label>
+                <input
+                  type="text"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  placeholder="Cergy"
+                  className="w-full rounded-md border border-border bg-background px-4 py-3 focus:border-primary focus:outline-none"
+                />
+              </div>
+            </div>
           </div>
 
           {/* Newsletter preference */}

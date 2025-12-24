@@ -1,44 +1,50 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { doc, updateDoc } from "firebase/firestore"
 import { db } from "@/lib/firebase"
 import { useAuth } from "@/lib/auth-context"
 
 export function WelcomeModal() {
-  const { user } = useAuth()
+  const { user, isProfileComplete } = useAuth()
+  const router = useRouter()
   const [show, setShow] = useState(false)
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    // Check if this is a new user who hasn't seen the modal
-    if (user) {
+    // Check if this is a new user who hasn't completed their profile
+    if (user && !isProfileComplete) {
       const hasSeenModal = localStorage.getItem(`welcome_modal_${user.uid}`)
       if (!hasSeenModal) {
         // Small delay for smooth appearance
         setTimeout(() => setShow(true), 500)
       }
     }
-  }, [user])
+  }, [user, isProfileComplete])
 
-  const handleChoice = async (acceptNewsletter: boolean) => {
+  const handleCompleteProfile = () => {
+    if (!user) return
+    localStorage.setItem(`welcome_modal_${user.uid}`, "true")
+    setShow(false)
+    router.push("/completer-profil")
+  }
+
+  const handleSkip = async () => {
     if (!user) return
     
     setLoading(true)
     try {
-      // Update user preferences in Firestore
+      // Mark that user chose to skip
       await updateDoc(doc(db, "users", user.uid), {
-        acceptMarketing: acceptNewsletter,
         welcomeModalSeen: true,
         updatedAt: new Date().toISOString(),
       })
       
-      // Mark modal as seen in localStorage
       localStorage.setItem(`welcome_modal_${user.uid}`, "true")
       setShow(false)
     } catch (error) {
       console.error("Error updating preferences:", error)
-      // Still close modal even on error
       localStorage.setItem(`welcome_modal_${user.uid}`, "true")
       setShow(false)
     } finally {
@@ -53,7 +59,7 @@ export function WelcomeModal() {
       {/* Backdrop */}
       <div 
         className="absolute inset-0 bg-black/50 backdrop-blur-sm animate-fade-in"
-        onClick={() => handleChoice(false)}
+        onClick={handleSkip}
       />
       
       {/* Modal */}
@@ -75,34 +81,34 @@ export function WelcomeModal() {
           
           <div className="mt-6 rounded-xl bg-primary/10 p-4 border border-primary/20">
             <p className="text-sm font-medium text-accent">
-              📧 Souhaitez-vous recevoir notre newsletter ?
+              📝 Complétez votre profil en quelques secondes
             </p>
             <p className="mt-2 text-xs text-muted-foreground">
-              Recevez nos nouvelles créations, offres exclusives et inspirations gourmandes directement dans votre boîte mail.
+              Ajoutez votre numéro de téléphone et adresse de livraison pour faciliter vos futures commandes.
             </p>
           </div>
           
           {/* Buttons */}
           <div className="mt-6 flex flex-col gap-3">
             <button
-              onClick={() => handleChoice(true)}
+              onClick={handleCompleteProfile}
               disabled={loading}
               className="w-full rounded-xl bg-primary py-3 px-6 font-medium text-primary-foreground shadow-lg transition-all duration-300 hover:bg-primary/90 hover:shadow-xl hover:-translate-y-0.5 disabled:opacity-50"
             >
-              {loading ? "..." : "✨ Oui, je m'inscris !"}
+              ✨ Compléter mon profil
             </button>
             
             <button
-              onClick={() => handleChoice(false)}
+              onClick={handleSkip}
               disabled={loading}
               className="w-full rounded-xl border border-border bg-white py-3 px-6 font-medium text-muted-foreground transition-all duration-300 hover:bg-secondary hover:text-accent disabled:opacity-50"
             >
-              Non merci, peut-être plus tard
+              {loading ? "..." : "Plus tard"}
             </button>
           </div>
           
           <p className="mt-4 text-xs text-muted-foreground">
-            Vous pourrez modifier ce choix à tout moment dans votre profil.
+            Vous pourrez toujours compléter votre profil dans votre espace personnel.
           </p>
         </div>
       </div>
