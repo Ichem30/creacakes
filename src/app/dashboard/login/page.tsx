@@ -32,9 +32,14 @@ export default function LoginPage() {
     setError("")
     setLoading(true)
     try {
-      await signInWithGoogle()
-      router.push("/dashboard")
-    } catch {
+      const result = await signInWithGoogle()
+      if (result.isNewUser) {
+        router.push("/completer-profil")
+      } else {
+        router.push("/dashboard")
+      }
+    } catch (err) {
+      console.error("Google sign-in error:", err)
       setError("Erreur lors de la connexion avec Google")
     } finally {
       setLoading(false)
