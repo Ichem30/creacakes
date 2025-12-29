@@ -4,6 +4,7 @@ import { ClientLayout } from "@/components/client-layout"
 import { GoogleAnalytics } from "@/components/google-analytics"
 import { StructuredData } from "@/components/structured-data"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { Analytics } from "@vercel/analytics/next"
 
 export const metadata: Metadata = {
   title: "D&S Créa'Cakes - Pâtisserie Artisanale sur Mesure | Val-d'Oise",
@@ -52,6 +53,7 @@ export default function RootLayout({
       <body className="min-h-screen">
         <GoogleAnalytics />
         <SpeedInsights />
+        <Analytics />
         <ClientLayout>
           {children}
         </ClientLayout>
