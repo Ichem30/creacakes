@@ -17,6 +17,11 @@ interface Product {
   image: string
   available: boolean
   order: number
+  promo?: {
+    enabled: boolean
+    discountPercent: number
+    endDate: string
+  }
 }
 
 export default function ProductsPage() {
@@ -122,9 +127,16 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-4 py-3 font-medium text-accent">{product.price}€</td>
                   <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-1 text-xs font-medium ${product.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
-                      {product.available ? "Disponible" : "Indisponible"}
-                    </span>
+                    <div className="flex flex-wrap gap-1">
+                      <span className={`rounded-full px-2 py-1 text-xs font-medium ${product.available ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                        {product.available ? "Disponible" : "Indisponible"}
+                      </span>
+                      {product.promo?.enabled && new Date(product.promo.endDate) > new Date() && (
+                        <span className="rounded-full bg-red-500 px-2 py-1 text-xs font-medium text-white">
+                          🏷️ -{product.promo.discountPercent}%
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link

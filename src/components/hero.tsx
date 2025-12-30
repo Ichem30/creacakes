@@ -57,7 +57,7 @@ export function Hero() {
             <div className="relative">
               <div className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:shadow-3xl group">
                 <Image 
-                  src="/hero-bg.png" 
+                  src="/elegant-multi-tier-wedding-cake-with-roses.jpg" 
                   alt="Gâteau de mariage élégant" 
                   width={600} 
                   height={700}
