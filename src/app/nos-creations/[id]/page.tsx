@@ -26,6 +26,11 @@ interface Product {
   image: string
   servings?: string
   allergens?: string[]
+  promo?: {
+    enabled: boolean
+    discountPercent: number
+    endDate: string
+  }
 }
 
 export default function ProductPage() {
@@ -120,6 +125,11 @@ export default function ProductPage() {
   const handleAddToCart = () => {
     if (!selectedVariant) return
     
+    // Calculate final price with promo
+    const finalPrice = isPromoActive 
+      ? Math.round(selectedVariant.price * (1 - product.promo!.discountPercent / 100))
+      : selectedVariant.price
+    
     // Build name with variant and flavor
     let itemName = product.name
     const details = []
@@ -136,7 +146,7 @@ export default function ProductPage() {
     addItem({
       id: product.id,
       name: itemName,
-      price: selectedVariant.price,
+      price: finalPrice,
       image: product.image,
     })
     setAdded(true)
@@ -147,6 +157,26 @@ export default function ProductPage() {
   const variants = product.priceVariants && product.priceVariants.length > 0 
     ? product.priceVariants 
     : [{ label: product.servings || "Standard", price: product.price }]
+
+  // Check if promo is active
+  const isPromoActive = product.promo?.enabled && product.promo?.endDate && new Date(product.promo.endDate) > new Date()
+  
+  // Calculate time remaining for promo
+  const getPromoTimeLeft = () => {
+    if (!product.promo?.endDate) return null
+    const total = new Date(product.promo.endDate).getTime() - Date.now()
+    if (total <= 0) return null
+    const days = Math.floor(total / (1000 * 60 * 60 * 24))
+    const hours = Math.floor((total % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
+    if (days > 0) return `${days}j ${hours}h`
+    if (hours > 0) return `${hours}h`
+    return "< 1h"
+  }
+  
+  const promoTimeLeft = isPromoActive ? getPromoTimeLeft() : null
+  
+  // Calculate promo price for display
+  const getPromoPrice = (price: number) => Math.round(price * (1 - product.promo!.discountPercent / 100))
 
   return (
     <section className="bg-card py-20 relative overflow-hidden">
@@ -178,9 +208,17 @@ export default function ProductPage() {
           </div>
 
           <div className="space-y-6 animate-fade-in-right" style={{ animationDelay: '0.2s' }}>
-            <span className="inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground shadow-lg">
-              {product.category}
-            </span>
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-block rounded-full bg-primary px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground shadow-lg">
+                {product.category}
+              </span>
+              {isPromoActive && (
+                <span className="inline-block rounded-full bg-red-500 px-4 py-1.5 text-xs font-bold uppercase tracking-wider text-white shadow-lg animate-pulse">
+                  🏷️ -{product.promo!.discountPercent}%
+                  {promoTimeLeft && <span className="ml-2 opacity-80">⏰ {promoTimeLeft}</span>}
+                </span>
+              )}
+            </div>
             <h1 className="font-serif text-4xl font-light text-accent md:text-5xl">{product.name}</h1>
             
             {/* Price variants selector */}
@@ -199,13 +237,29 @@ export default function ProductPage() {
                       }`}
                     >
                       <span className="block">{variant.label}</span>
-                      <span className="block text-lg font-semibold">{variant.price}€</span>
+                      {isPromoActive ? (
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg font-semibold text-red-500">{getPromoPrice(variant.price)}€</span>
+                          <span className="text-sm line-through opacity-60">{variant.price}€</span>
+                        </div>
+                      ) : (
+                        <span className="block text-lg font-semibold">{variant.price}€</span>
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
             ) : (
-              <p className="font-serif text-3xl font-semibold text-primary">{selectedVariant?.price}€</p>
+              <div>
+                {isPromoActive ? (
+                  <div className="flex items-center gap-3">
+                    <span className="font-serif text-3xl font-semibold text-red-500">{getPromoPrice(selectedVariant?.price || 0)}€</span>
+                    <span className="text-xl text-muted-foreground line-through">{selectedVariant?.price}€</span>
+                  </div>
+                ) : (
+                  <p className="font-serif text-3xl font-semibold text-primary">{selectedVariant?.price}€</p>
+                )}
+              </div>
             )}
 
             {/* Flavor selector */}
@@ -256,7 +310,10 @@ export default function ProductPage() {
                 }`}
               >
                 <span className="relative z-10">
-                  {added ? "✓ Ajouté au panier !" : `Ajouter au panier${selectedVariant ? ` - ${selectedVariant.price}€` : ''}`}
+                  {added 
+                    ? "✓ Ajouté au panier !" 
+                    : `Ajouter au panier - ${isPromoActive && selectedVariant ? getPromoPrice(selectedVariant.price) : selectedVariant?.price}€`
+                  }
                 </span>
                 {!added && <div className="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-500 skew-x-12" />}
               </button>
