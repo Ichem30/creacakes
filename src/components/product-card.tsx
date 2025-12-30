@@ -102,7 +102,8 @@ export function ProductCard({ id, slug, title, description, price, category, ima
           <div className="flex items-center justify-between border-t border-border/40 pt-4">
             <div>
               {isPromoActive ? (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-sm text-accent">À partir de</span>
                   <span className="font-serif text-xl font-semibold text-red-500">{promoPrice}€</span>
                   <span className="text-sm text-muted-foreground line-through">{price}€</span>
                   {timeLeft && (
