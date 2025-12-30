@@ -171,6 +171,15 @@ h1, h2, h3, h4, h5, h6 {
   animation: marquee 20s linear infinite;
 }
 
+@keyframes marquee-infinite {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-infinite {
+  animation: marquee-infinite 30s linear infinite;
+}
+
 @keyframes slideUp {
   from { 
     opacity: 1;

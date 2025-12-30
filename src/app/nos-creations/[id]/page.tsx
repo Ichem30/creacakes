@@ -161,15 +161,17 @@ export default function ProductPage() {
         
         <div className="grid gap-12 md:grid-cols-2 md:items-start md:gap-16">
           <div className="relative animate-fade-in-left">
-            <div className="overflow-hidden rounded-2xl shadow-2xl transition-all duration-500 hover:shadow-3xl group">
-              <Image 
-                src={product.image || "/placeholder.jpg"} 
-                alt={product.name} 
-                width={600}
-                height={600}
-                className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-105" 
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-accent/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="overflow-hidden rounded-2xl shadow-2xl bg-white transition-all duration-500 hover:shadow-3xl group">
+              <div className="aspect-[4/3] relative">
+                <Image 
+                  src={product.image || "/placeholder.jpg"} 
+                  alt={product.name} 
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain p-4 transition-transform duration-700 group-hover:scale-[1.02]" 
+                />
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-accent/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
             </div>
             <div className="absolute -right-4 -top-4 -z-10 h-full w-full rounded-2xl border-2 border-primary/30 transition-all duration-300"></div>
             <div className="absolute inset-0 -z-10 rounded-2xl bg-primary/20 blur-3xl opacity-50" />
