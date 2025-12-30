@@ -244,7 +244,7 @@ export default function QuotesPage() {
               {/* Admin Actions */}
               <div className="mt-4 flex flex-wrap gap-2 border-t border-border pt-4">
                 <Link
-                  href={`/dashboard/deviss/${quote.id}`}
+                  href={`/dashboard/quotes/${quote.id}`}
                   className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
                 >
                   💬 Voir / Discuter

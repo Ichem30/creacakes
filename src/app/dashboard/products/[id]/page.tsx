@@ -210,7 +210,7 @@ export default function EditProductPage() {
         updatedAt: new Date().toISOString(),
       })
 
-      router.push("/dashboard/nos-creations")
+      router.push("/dashboard/products")
     } catch (error) {
       console.error("Error updating product:", error)
       alert("Erreur lors de la mise à jour du produit")
@@ -226,7 +226,7 @@ export default function EditProductPage() {
   return (
     <div>
       <div className="mb-8">
-        <Link href="/dashboard/nos-creations" className="text-sm text-muted-foreground hover:text-primary">
+        <Link href="/dashboard/products" className="text-sm text-muted-foreground hover:text-primary">
           ← Retour aux produits
         </Link>
         <h1 className="mt-2 font-serif text-3xl font-medium text-accent">Modifier le produit</h1>
@@ -459,7 +459,7 @@ export default function EditProductPage() {
             {saving ? "Enregistrement..." : "Enregistrer les modifications"}
           </button>
           <Link
-            href="/dashboard/nos-creations"
+            href="/dashboard/products"
             className="rounded-md border border-border px-6 py-3 text-sm font-medium text-foreground hover:bg-secondary"
           >
             Annuler

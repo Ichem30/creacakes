@@ -283,7 +283,7 @@ export default function QuoteDetailPage() {
     return (
       <div className="text-center py-12">
         <p className="text-muted-foreground">Devis non trouvé</p>
-        <Link href="/dashboard/deviss" className="mt-4 inline-block text-primary hover:underline">
+        <Link href="/dashboard/quotes" className="mt-4 inline-block text-primary hover:underline">
           ← Retour aux devis
         </Link>
       </div>
@@ -300,7 +300,7 @@ export default function QuoteDetailPage() {
 
   return (
     <div>
-      <Link href="/dashboard/deviss" className="mb-4 inline-block text-sm text-muted-foreground hover:text-primary">
+      <Link href="/dashboard/quotes" className="mb-4 inline-block text-sm text-muted-foreground hover:text-primary">
         ← Retour aux devis
       </Link>
 

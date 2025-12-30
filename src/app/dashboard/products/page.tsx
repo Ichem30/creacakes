@@ -68,7 +68,7 @@ export default function ProductsPage() {
           <p className="text-muted-foreground">{products.length} produits</p>
         </div>
         <Link
-          href="/dashboard/nos-creations/new"
+          href="/dashboard/products/new"
           className="inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
         >
           ➕ Ajouter un produit
@@ -81,7 +81,7 @@ export default function ProductsPage() {
           <h2 className="mt-4 font-serif text-xl font-medium text-accent">Aucun produit</h2>
           <p className="mt-2 text-muted-foreground">Commencez par ajouter votre premier gâteau !</p>
           <Link
-            href="/dashboard/nos-creations/new"
+            href="/dashboard/products/new"
             className="mt-4 inline-flex items-center gap-2 rounded-md bg-accent px-4 py-2 text-sm font-medium text-accent-foreground hover:bg-accent/90"
           >
             ➕ Ajouter un produit
@@ -128,7 +128,7 @@ export default function ProductsPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <Link
-                      href={`/dashboard/nos-creations/${product.id}`}
+                      href={`/dashboard/products/${product.id}`}
                       className="mr-2 text-sm text-primary hover:underline"
                     >
                       Modifier

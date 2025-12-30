@@ -178,7 +178,7 @@ const templates = {
       <table role="presentation" style="margin: 30px 0; width: 100%;">
         <tr>
           <td align="center">
-            <a href="${SITE_URL}/dashboard/deviss/${data.quoteId}" style="display: inline-block; padding: 14px 40px; background-color: #d4a574; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+            <a href="${SITE_URL}/dashboard/quotes/${data.quoteId}" style="display: inline-block; padding: 14px 40px; background-color: #d4a574; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
               Voir le devis
             </a>
           </td>
@@ -207,7 +207,7 @@ const templates = {
       <table role="presentation" style="margin: 30px 0; width: 100%;">
         <tr>
           <td align="center">
-            <a href="${SITE_URL}/dashboard/deviss/${data.quoteId}" style="display: inline-block; padding: 14px 40px; background-color: #d4a574; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
+            <a href="${SITE_URL}/dashboard/quotes/${data.quoteId}" style="display: inline-block; padding: 14px 40px; background-color: #d4a574; color: #ffffff; text-decoration: none; font-size: 16px; font-weight: 600; border-radius: 8px;">
               Répondre
             </a>
           </td>
