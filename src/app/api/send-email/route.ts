@@ -52,7 +52,7 @@ function emailWrapper(content: string, showUnsubscribe: boolean = false) {
               <p style="margin: 0 0 15px 0; font-size: 12px; color: #d4a574; line-height: 1.5;">Pâtisseries artisanales & créations personnalisées</p>
               <table role="presentation" style="margin: 15px auto 0 auto;">
                 <tr>
-                  <td style="padding: 0 10px;"><a href="https://www.instagram.com/dscrea_cakes/" style="color: #d4a574; text-decoration: none; font-size: 12px;">Instagram</a></td>
+                  <td style="padding: 0 10px;"><a href="https://www.instagram.com/ds_creacakes/" style="color: #d4a574; text-decoration: none; font-size: 12px;">Instagram</a></td>
                   <td style="padding: 0 10px; color: #d4a574;">•</td>
                   <td style="padding: 0 10px;"><a href="https://www.tiktok.com/@ds.creacakes" style="color: #d4a574; text-decoration: none; font-size: 12px;">TikTok</a></td>
                   <td style="padding: 0 10px; color: #d4a574;">•</td>

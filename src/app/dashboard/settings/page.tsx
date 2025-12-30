@@ -133,7 +133,7 @@ export default function SettingsPage() {
               <label className="mb-2 block text-sm font-medium text-accent">Instagram</label>
               <input
                 type="url"
-                defaultValue="https://www.instagram.com/dscrea_cakes/"
+                defaultValue="https://www.instagram.com/ds_creacakes/"
                 className="w-full rounded-md border border-border bg-background px-4 py-3 text-muted-foreground"
                 disabled
               />

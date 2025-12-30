@@ -120,12 +120,12 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold text-accent">Instagram</h3>
                       <a 
-                        href="https://www.instagram.com/dscrea_cakes/" 
+                        href="https://www.instagram.com/ds_creacakes/" 
                         target="_blank" 
                         rel="noopener noreferrer"
                         className="text-primary underline-animation"
                       >
-                        @dscrea_cakes
+                        @ds_creacakes
                       </a>
                     </div>
                   </div>

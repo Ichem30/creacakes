@@ -203,7 +203,7 @@ export default function QuotePage() {
               <p className="text-sm text-muted-foreground">Vous pouvez aussi nous contacter directement :</p>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <a 
-                  href="https://www.instagram.com/dscrea_cakes/" 
+                  href="https://www.instagram.com/ds_creacakes/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-sm font-medium text-white"
@@ -519,7 +519,7 @@ export default function QuotePage() {
               </p>
               <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
                 <a 
-                  href="https://www.instagram.com/dscrea_cakes/" 
+                  href="https://www.instagram.com/ds_creacakes/" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 rounded-md bg-gradient-to-r from-purple-500 to-pink-500 px-6 py-3 text-sm font-medium text-white hover:opacity-90"

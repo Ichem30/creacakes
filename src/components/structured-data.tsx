@@ -29,7 +29,7 @@ export function StructuredData() {
     "priceRange": "€€",
     "servesCuisine": "Pâtisserie française",
     "sameAs": [
-      "https://www.instagram.com/dscrea_cakes/"
+      "https://www.instagram.com/ds_creacakes/"
     ]
   }
 
