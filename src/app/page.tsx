@@ -5,6 +5,7 @@ import { collection, query, where, getDocs, limit, orderBy } from "firebase/fire
 import { db } from "@/lib/firebase"
 import { Hero } from "@/components/hero"
 import { ProductCard } from "@/components/product-card"
+import { PromoBanner } from "@/components/promo-banner"
 import Link from "next/link"
 import Image from "next/image"
 
@@ -64,6 +65,7 @@ export default function Home() {
 
   return (
     <>
+      <PromoBanner />
       <Hero />
 
       {/* Featured Products */}

@@ -161,6 +161,16 @@ h1, h2, h3, h4, h5, h6 {
   }
 }
 
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: inline-block;
+  animation: marquee 20s linear infinite;
+}
+
 @keyframes slideUp {
   from { 
     opacity: 1;
