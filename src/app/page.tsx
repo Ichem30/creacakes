@@ -17,6 +17,11 @@ interface Product {
   category: string
   image: string
   slug?: string
+  promo?: {
+    enabled: boolean
+    discountPercent: number
+    endDate: string
+  }
 }
 
 export default function Home() {
@@ -105,6 +110,7 @@ export default function Home() {
                   category={product.category}
                   image={product.image}
                   slug={product.slug}
+                  promo={product.promo}
                 />
               ))}
             </div>

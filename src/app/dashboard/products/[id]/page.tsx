@@ -27,6 +27,11 @@ export default function EditProductPage() {
     { label: "", price: "" }
   ])
   const [flavors, setFlavors] = useState<string[]>([""])
+  const [promo, setPromo] = useState({
+    enabled: false,
+    discountPercent: 10,
+    endDate: ""
+  })
   
   const [form, setForm] = useState({
     name: "",
@@ -94,6 +99,15 @@ export default function EditProductPage() {
         // Load flavors
         if (data.flavors && data.flavors.length > 0) {
           setFlavors(data.flavors)
+        }
+        
+        // Load promo
+        if (data.promo) {
+          setPromo({
+            enabled: data.promo.enabled || false,
+            discountPercent: data.promo.discountPercent || 10,
+            endDate: data.promo.endDate || ""
+          })
         }
       }
     } catch (error) {
@@ -207,6 +221,11 @@ export default function EditProductPage() {
         allergens: form.allergens.split(",").map(a => a.trim()).filter(Boolean),
         image: imageUrl,
         available: form.available,
+        promo: promo.enabled ? {
+          enabled: true,
+          discountPercent: promo.discountPercent,
+          endDate: promo.endDate
+        } : { enabled: false },
         updatedAt: new Date().toISOString(),
       })
 
@@ -448,6 +467,47 @@ export default function EditProductPage() {
           <label htmlFor="available" className="text-sm font-medium text-accent">
             Produit disponible à la vente
           </label>
+        </div>
+
+        {/* Promo Section */}
+        <div className="rounded-lg border border-red-200 bg-red-50/50 p-4 space-y-4">
+          <div className="flex items-center gap-2">
+            <input
+              type="checkbox"
+              id="promoEnabled"
+              checked={promo.enabled}
+              onChange={(e) => setPromo({ ...promo, enabled: e.target.checked })}
+              className="h-4 w-4 rounded border-border text-red-500"
+            />
+            <label htmlFor="promoEnabled" className="text-sm font-medium text-red-600">
+              🏷️ Activer une promotion
+            </label>
+          </div>
+          
+          {promo.enabled && (
+            <div className="grid gap-4 md:grid-cols-2">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-accent">Réduction (%)</label>
+                <input
+                  type="number"
+                  min="1"
+                  max="90"
+                  value={promo.discountPercent}
+                  onChange={(e) => setPromo({ ...promo, discountPercent: parseInt(e.target.value) || 10 })}
+                  className="w-full rounded-md border border-border px-4 py-2 focus:border-primary focus:outline-none"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-medium text-accent">Fin de la promo</label>
+                <input
+                  type="datetime-local"
+                  value={promo.endDate}
+                  onChange={(e) => setPromo({ ...promo, endDate: e.target.value })}
+                  className="w-full rounded-md border border-border px-4 py-2 focus:border-primary focus:outline-none"
+                />
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="flex gap-4">

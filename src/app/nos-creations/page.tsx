@@ -14,6 +14,11 @@ interface Product {
   category: string
   image: string
   available: boolean
+  promo?: {
+    enabled: boolean
+    discountPercent: number
+    endDate: string
+  }
 }
 
 interface Category {
@@ -183,6 +188,7 @@ export default function ProductsPage() {
                   image={product.image}
                   slug={product.slug}
                   available={product.available}
+                  promo={product.promo}
                 />
               ))}
             </div>
